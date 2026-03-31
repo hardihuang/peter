@@ -1,0 +1,5 @@
+2026/03/30-12:29:36.580 fd7 Recovering log #3
+2026/03/30-12:29:36.581 fd7 Level-0 table #5: started
+2026/03/30-12:29:36.596 fd7 Level-0 table #5: 178 bytes OK
+2026/03/30-12:29:36.624 fd7 Delete type=3 #2
+2026/03/30-12:29:36.624 fd7 Delete type=0 #3

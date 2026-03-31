@@ -1,0 +1,9 @@
+{
+  "id": "dashscope-cfg",
+  "providers": ["dashscope"],
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {}
+  }
+}

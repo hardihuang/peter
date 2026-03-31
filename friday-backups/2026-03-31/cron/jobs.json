@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "jobs": [
+    {
+      "id": "52d8d873-09ec-42e8-90c4-6f4487a98dfe",
+      "name": "daily-work-log",
+      "description": "Daily work log at 3:45 PM",
+      "enabled": true,
+      "createdAtMs": 1774926296485,
+      "updatedAtMs": 1774926296485,
+      "schedule": {
+        "kind": "cron",
+        "expr": "45 15 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Create a daily work log summary. Read the memory files from today (memory/YYYY-MM-DD.md), review all conversations and tasks completed today, then create a comprehensive summary including:\n\n1. All tasks completed\n2. Files created or modified\n3. Important conversations\n4. Any issues encountered and resolved\n5. Key decisions made\n\nWrite this as a well-formatted document and save it to:\n- The workspace memory folder as memory/YYYY-MM-DD-summary.md\n- The Feishu wiki space 7623246973616819141 as a new page titled 'Daily Work Log - YYYY-MM-DD'\n\nBe precise and detailed in the summary."
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "last"
+      },
+      "state": {
+        "nextRunAtMs": 1774943100000
+      }
+    }
+  ]
+}
