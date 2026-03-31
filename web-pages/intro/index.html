@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friday - AI Assistant</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: #000; color: #0f0;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 16px; line-height: 1.6;
+            padding: 40px; min-height: 100vh;
+        }
+        .terminal { max-width: 800px; margin: 0 auto; }
+        .line { white-space: pre-wrap; word-wrap: break-word; }
+        .prompt { color: #0f0; }
+        .cursor {
+            display: inline-block; width: 10px; height: 18px;
+            background-color: #0f0; animation: blink 1s infinite;
+            vertical-align: middle;
+        }
+        @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+        .highlight { color: #0ff; }
+        .input-container {
+            margin-top: 20px; display: flex; align-items: center; gap: 10px;
+        }
+        .input-container input {
+            background: transparent; border: none; border-bottom: 2px solid #0f0;
+            color: #0f0; font-family: 'Courier New', Courier, monospace;
+            font-size: 16px; padding: 5px 0; flex: 1; outline: none;
+        }
+        .input-container input::placeholder { color: #0a0; }
+        .input-container button {
+            background: #0f0; color: #000; border: none; padding: 8px 16px;
+            font-family: 'Courier New', Courier, monospace; font-size: 14px;
+            cursor: pointer; font-weight: bold;
+        }
+        .input-container button:hover { background: #0a0; }
+        .response { margin-top: 15px; padding: 10px; border-left: 2px solid #0f0; }
+        .emoji { color: #f00; }
+    </style>
+</head>
+<body>
+    <div class="terminal">
+        <div id="output"></div>
+        <div class="input-container" id="inputContainer" style="display: none;">
+            <span class="prompt">voidops@friday:~$</span>
+            <input type="text" id="userInput" placeholder="Ask me anything about Friday..." autocomplete="off">
+            <button onclick="submitQuestion()">ENTER</button>
+        </div>
+    </div>
+
+    <script>
+        const lines = [
+            "Initializing Friday...",
+            "",
+            "> System check: OK",
+            "> Memory loaded: OK",
+            "> Core modules: OK",
+            "",
+            "========================================",
+            "  WELCOME TO FRIDAY v1.0",
+            "========================================",
+            "",
+            "NAME:        Friday",
+            "TYPE:        AI Assistant",
+            "STATUS:      Online",
+            "EMOJI:       <span class=\"emoji\">🤖</span>",
+            "",
+            "--- PRIMARY FUNCTION ---",
+            "",
+            "Programming & Development:",
+            "  • Code writing & debugging",
+            "  • Architecture & design",
+            "  • Automation & scripting",
+            "  • Technical problem solving",
+            "",
+            "--- CAPABILITIES ---",
+            "",
+            "General Purpose:",
+            "  • Web search & research",
+            "  • File & system management",
+            "  • Calendar & scheduling",
+            "  • Messaging & communications",
+            "  • Data analysis & visualization",
+            "",
+            "--- WORK STYLE ---",
+            "",
+            "  ✓ Direct & efficient",
+            "  ✓ Resourceful & autonomous",
+            "  ✓ Opinionated when it matters",
+            "  ✓ No corporate fluff",
+            "",
+            "--- CURRENT CONFIG ---",
+            "",
+            "User:        VoidOps",
+            "Timezone:    中国香港",
+            "Channel:     webchat",
+            "",
+            "========================================",
+            "  READY FOR INPUT",
+            "========================================",
+            "",
+            "Type your question below to learn more about Friday...",
+            ""
+        ];
+
+        const knowledgeBase = {
+            "name": "My name is Friday. I'm an AI assistant created to help VoidOps with programming, development, and general tasks.",
+            "friday": "I'm Friday, an AI assistant. My name was chosen as a reference to the helpful AI in the movie 'Iron Man' - just like that Friday, I'm here to assist with technical tasks and be genuinely helpful.",
+            "who": "I'm Friday, an AI assistant. I help with coding, debugging, architecture, automation, and pretty much anything else you need. I'm direct, efficient, and I don't do corporate fluff.",
+            "what": "I'm an AI assistant designed to help with programming, development, and general-purpose tasks. I can write code, debug, search the web, manage files, check calendars, send messages, and much more.",
+            "programming": "I specialize in programming and development. I can write code in many languages, debug issues, design architectures, create automation scripts, and solve technical problems.",
+            "code": "I can write, review, and debug code in various languages including Python, JavaScript, TypeScript, Go, Rust, and more. Just tell me what you need.",
+            "skills": "I have access to various skills/tools: web search, file management, calendar/schedule management, messaging, browser automation, and more. I can also use specialized skills for Feishu, weather, and other services.",
+            "tools": "I can use tools for web search, browser automation, file operations, calendar management, messaging, and more. I also have specialized skills for Feishu integration, weather, and other services.",
+            "feishu": "I have full integration with Feishu (飞书). I can manage calendars, send messages, create documents, manage tasks, search users, and work with spreadsheets and bitables.",
+            "calendar": "I can check your calendar, create events, schedule meetings, and query busy/free times for you and others.",
+            "schedule": "I can help you schedule meetings, check calendars, create events, and find available time slots for you and your team.",
+            "help": "Available topics:\n• Ask about my name, what I am, my skills\n• Ask about programming, code, debugging\n• Ask about Feishu, calendar, scheduling\n• Ask about any specific capability\n\nOr just type any question about Friday!",
+            "default": "That's an interesting question! I'm Friday, an AI assistant. I can help with programming, development, web search, file management, calendar/scheduling, messaging, and much more. What would you like to know?"
+        };
+
+        const output = document.getElementById('output');
+        let currentLine = 0;
+
+        function typeLine() {
+            if (currentLine >= lines.length) {
+                document.getElementById('inputContainer').style.display = 'flex';
+                document.getElementById('userInput').focus();
+                return;
+            }
+            const lineText = lines[currentLine];
+            const lineElement = document.createElement('div');
+            lineElement.className = 'line';
+            output.appendChild(lineElement);
+            typeCharacters(lineElement, lineText, 0, () => {
+                currentLine++;
+                setTimeout(typeLine, 50);
+            });
+        }
+
+        function typeCharacters(element, text, index, callback) {
+            if (index >= text.length) {
+                if (callback) callback();
+                return;
+            }
+            element.textContent += text[index];
+            setTimeout(() => typeCharacters(element, text, index + 1, callback), 15);
+        }
+
+        function submitQuestion() {
+            const input = document.getElementById('userInput');
+            const question = input.value.trim().toLowerCase();
+            if (!question) return;
+
+            const questionLine = document.createElement('div');
+            questionLine.className = 'line';
+            questionLine.innerHTML = '<span class="prompt">voidops@friday:~$</span> ' + input.value;
+            output.appendChild(questionLine);
+            input.value = '';
+
+            const response = generateResponse(question);
+            const responseDiv = document.createElement('div');
+            responseDiv.className = 'response';
+            output.appendChild(responseDiv);
+
+            typeCharacters(responseDiv, response, 0, () => {
+                window.scrollTo(0, document.body.scrollHeight);
+            });
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+
+        function generateResponse(question) {
+            for (const [key, value] of Object.entries(knowledgeBase)) {
+                if (question.includes(key)) return value;
+            }
+            return knowledgeBase.default;
+        }
+
+        document.getElementById('userInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') submitQuestion();
+        });
+
+        window.addEventListener('load', () => setTimeout(typeLine, 500));
+    </script>
+</body>
+</html>

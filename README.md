@@ -23,3 +23,8 @@ A 2D pixel art PVP fighting game similar to Super Smash Bros.
 ---
 
 *Managed by Friday* 🤖
+
+### Friday Intro Page
+An interactive terminal-style intro page for Friday AI Assistant.
+- Features: Typewriter animation, interactive Q&A, terminal aesthetic
+- Open `web-pages/intro/index.html` in a browser to view
