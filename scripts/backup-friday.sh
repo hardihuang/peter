@@ -57,9 +57,9 @@ fi
 echo "Current backups:"
 ls -la "$BACKUP_BASE"
 
-# Commit and push to GitHub
+# Commit and push to GitHub (excluding backup folder to avoid recursion)
 cd "$BACKUP_REPO"
-git add -A
+git add -A -- ':!friday-backups/*'
 git commit -m "Backup: Friday data as of $DATE" || echo "Nothing to commit"
 git push origin main
 

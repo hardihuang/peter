@@ -7,7 +7,7 @@
       "description": "Daily work log at 3:45 PM",
       "enabled": true,
       "createdAtMs": 1774926296485,
-      "updatedAtMs": 1774926296485,
+      "updatedAtMs": 1774943276120,
       "schedule": {
         "kind": "cron",
         "expr": "45 15 * * *",
@@ -24,7 +24,14 @@
         "channel": "last"
       },
       "state": {
-        "nextRunAtMs": 1774943100000
+        "nextRunAtMs": 1775029500000,
+        "lastRunAtMs": 1774943100005,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 176115,
+        "lastError": "Delivering to Feishu requires target <chatId|user:openId|chat:chatId>",
+        "lastDeliveryStatus": "unknown",
+        "consecutiveErrors": 1
       }
     }
   ]

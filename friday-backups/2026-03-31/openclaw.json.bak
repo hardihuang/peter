@@ -1,7 +1,7 @@
 {
   "meta": {
     "lastTouchedVersion": "2026.3.13",
-    "lastTouchedAt": "2026-03-30T03:50:26.929Z"
+    "lastTouchedAt": "2026-03-31T06:43:02.639Z"
   },
   "wizard": {
     "lastRunAt": "2026-03-23T13:25:27.366Z",
@@ -16,6 +16,13 @@
     "executablePath": "/usr/bin/google-chrome",
     "headless": true,
     "defaultProfile": "openclaw"
+  },
+  "acp": {
+    "enabled": true,
+    "allowedAgents": [
+      "main",
+      "programer"
+    ]
   },
   "models": {
     "providers": {
@@ -101,7 +108,18 @@
       "compaction": {
         "mode": "safeguard"
       }
-    }
+    },
+    "list": [
+      {
+        "id": "main"
+      },
+      {
+        "id": "programer",
+        "name": "programer",
+        "workspace": "/home/admin/.openclaw/agents/programer",
+        "agentDir": "/home/admin/.openclaw/agents/programer/agent"
+      }
+    ]
   },
   "tools": {
     "profile": "full"
@@ -132,6 +150,18 @@
           "enabled": true
         }
       }
+    }
+  },
+  "channels": {
+    "feishu": {
+      "enabled": true,
+      "appId": "cli_a940ae98b3bb1bd8",
+      "appSecret": "jYpwMVgAFPO4f73EMVpGyfmCbawMOfuH",
+      "domain": "feishu",
+      "connectionMode": "websocket",
+      "requireMention": true,
+      "dmPolicy": "open",
+      "groupPolicy": "open"
     }
   },
   "gateway": {
@@ -206,7 +236,7 @@
         "enabled": true
       },
       "feishu": {
-        "enabled": true
+        "enabled": false
       }
     },
     "installs": {
@@ -269,18 +299,6 @@
         "resolvedAt": "2026-03-24T06:43:48.927Z",
         "installedAt": "2026-03-24T06:44:00.860Z"
       }
-    }
-  },
-  "channels": {
-    "feishu": {
-      "enabled": true,
-      "appId": "cli_a940ae98b3bb1bd8",
-      "appSecret": "jYpwMVgAFPO4f73EMVpGyfmCbawMOfuH",
-      "domain": "feishu",
-      "connectionMode": "websocket",
-      "requireMention": true,
-      "dmPolicy": "open",
-      "groupPolicy": "open"
     }
   }
 }

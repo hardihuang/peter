@@ -1,7 +1,7 @@
 {
   "meta": {
     "lastTouchedVersion": "2026.3.13",
-    "lastTouchedAt": "2026-03-30T07:09:18.648Z"
+    "lastTouchedAt": "2026-03-31T06:43:21.138Z"
   },
   "wizard": {
     "lastRunAt": "2026-03-23T13:25:27.366Z",
@@ -16,6 +16,13 @@
     "executablePath": "/usr/bin/google-chrome",
     "headless": true,
     "defaultProfile": "openclaw"
+  },
+  "acp": {
+    "enabled": true,
+    "allowedAgents": [
+      "main",
+      "programer"
+    ]
   },
   "models": {
     "providers": {
@@ -101,7 +108,18 @@
       "compaction": {
         "mode": "safeguard"
       }
-    }
+    },
+    "list": [
+      {
+        "id": "main"
+      },
+      {
+        "id": "programer",
+        "name": "programer",
+        "workspace": "/home/admin/.openclaw/agents/programer",
+        "agentDir": "/home/admin/.openclaw/agents/programer/agent"
+      }
+    ]
   },
   "tools": {
     "profile": "full"
@@ -199,7 +217,8 @@
       "wecom-openclaw-plugin",
       "openclaw-qqbot",
       "dashscope-cfg",
-      "openclaw-lark"
+      "openclaw-lark",
+      "acpx"
     ],
     "entries": {
       "wecom-openclaw-plugin": {
@@ -219,6 +238,9 @@
       },
       "feishu": {
         "enabled": false
+      },
+      "acpx": {
+        "enabled": true
       }
     },
     "installs": {

@@ -1,7 +1,7 @@
 {
   "meta": {
     "lastTouchedVersion": "2026.3.13",
-    "lastTouchedAt": "2026-03-30T03:48:38.275Z"
+    "lastTouchedAt": "2026-03-31T06:40:33.358Z"
   },
   "wizard": {
     "lastRunAt": "2026-03-23T13:25:27.366Z",
@@ -58,6 +58,24 @@
             },
             "contextWindow": 1000000,
             "maxTokens": 65536
+          },
+          {
+            "id": "kimi-k2.5",
+            "name": "Kimi-K2.5",
+            "api": "openai-completions",
+            "reasoning": false,
+            "input": [
+              "text",
+              "image"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 262144,
+            "maxTokens": 32768
           }
         ]
       }
@@ -66,7 +84,7 @@
   "agents": {
     "defaults": {
       "model": {
-        "primary": "dashscope-coding/qwen3.5-plus"
+        "primary": "dashscope-coding/kimi-k2.5"
       },
       "models": {
         "dashscope-coding/qwen3-max-2026-01-23": {
@@ -74,13 +92,27 @@
         },
         "dashscope-coding/qwen3.5-plus": {
           "alias": "qwen3.5-plus"
+        },
+        "dashscope-coding/kimi-k2.5": {
+          "alias": "kimi-k2.5"
         }
       },
       "workspace": "/home/admin/.openclaw/workspace",
       "compaction": {
         "mode": "safeguard"
       }
-    }
+    },
+    "list": [
+      {
+        "id": "main"
+      },
+      {
+        "id": "programer",
+        "name": "programer",
+        "workspace": "/home/admin/.openclaw/agents/programer",
+        "agentDir": "/home/admin/.openclaw/agents/programer/agent"
+      }
+    ]
   },
   "tools": {
     "profile": "full"
@@ -111,6 +143,18 @@
           "enabled": true
         }
       }
+    }
+  },
+  "channels": {
+    "feishu": {
+      "enabled": true,
+      "appId": "cli_a940ae98b3bb1bd8",
+      "appSecret": "jYpwMVgAFPO4f73EMVpGyfmCbawMOfuH",
+      "domain": "feishu",
+      "connectionMode": "websocket",
+      "requireMention": true,
+      "dmPolicy": "open",
+      "groupPolicy": "open"
     }
   },
   "gateway": {
@@ -183,6 +227,9 @@
       },
       "openclaw-lark": {
         "enabled": true
+      },
+      "feishu": {
+        "enabled": false
       }
     },
     "installs": {
