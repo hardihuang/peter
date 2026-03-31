@@ -58,87 +58,55 @@
         .healthFill { height: 100%; transition: width 0.3s; }
         .healthFill.p1 { background: linear-gradient(90deg, #ff6b6b, #ee5a5a); }
         .healthFill.p2 { background: linear-gradient(90deg, #4ecdc4, #44b3ab); }
-        #startScreen, #mapSelectScreen, #charSelectScreen, #winnerScreen {
+        #startScreen, #winnerScreen {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.95);
+            background: rgba(0, 0, 0, 0.9);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 100;
         }
-        #mapSelectScreen, #charSelectScreen { display: none; }
         h1 {
             color: #e94560;
-            font-size: 42px;
+            font-size: 48px;
             text-shadow: 3px 3px 0 #0f3460, -1px -1px 0 #fff;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             animation: pulse 2s infinite;
-        }
-        h2 {
-            color: #4ecdc4;
-            font-size: 28px;
-            margin-bottom: 20px;
         }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         input[type="text"] {
-            padding: 12px 20px;
-            font-size: 18px;
+            padding: 15px 25px;
+            font-size: 20px;
             border: 3px solid #e94560;
             border-radius: 8px;
             background: #1a1a2e;
             color: #fff;
             text-align: center;
-            margin: 8px;
-            width: 280px;
+            margin: 10px;
+            width: 300px;
         }
-        button, .mapBtn, .charBtn {
-            padding: 12px 30px;
-            font-size: 18px;
+        button {
+            padding: 15px 40px;
+            font-size: 20px;
             background: linear-gradient(135deg, #e94560, #ff6b6b);
             border: none;
             border-radius: 8px;
             color: #fff;
             cursor: pointer;
-            margin: 8px;
+            margin: 10px;
             transition: all 0.3s;
             text-transform: uppercase;
             font-weight: bold;
         }
-        button:hover, .mapBtn:hover, .charBtn:hover { transform: scale(1.1); box-shadow: 0 0 20px rgba(233, 69, 96, 0.6); }
-        .mapBtn.selected, .charBtn.selected { border: 3px solid #4ecdc4; box-shadow: 0 0 20px #4ecdc4; }
-        .mapGrid, .charGrid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin: 20px;
-            max-width: 600px;
-        }
-        .mapBtn, .charBtn {
-            width: 180px;
-            height: 100px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-        }
-        .mapBtn .preview {
-            width: 160px;
-            height: 50px;
-            margin-bottom: 5px;
-            border-radius: 4px;
-        }
-        .charBtn .charIcon {
-            font-size: 32px;
-            margin-bottom: 5px;
-        }
+        button:hover { transform: scale(1.1); box-shadow: 0 0 30px rgba(233, 69, 96, 0.6); }
         #controls {
-            margin-top: 15px;
+            margin-top: 20px;
             color: #aaa;
-            font-size: 13px;
+            font-size: 14px;
             text-align: center;
+            line-height: 1.8;
         }
         .controlKey {
             display: inline-block;
@@ -151,7 +119,7 @@
         #winnerScreen { display: none; z-index: 200; }
         #winnerText {
             color: #ffd700;
-            font-size: 56px;
+            font-size: 64px;
             text-shadow: 4px 4px 0 #ff6b6b;
             animation: winnerPulse 1s infinite;
             text-align: center;
@@ -161,10 +129,15 @@
             50% { transform: scale(1.1) rotate(2deg); }
         }
         .hidden { display: none !important; }
-        .featureList {
-            color: #aaa;
-            font-size: 12px;
-            margin-top: 5px;
+        #debug { 
+            position: absolute; 
+            bottom: 10px; 
+            left: 10px; 
+            color: #0f0; 
+            font-size: 12px; 
+            background: rgba(0,0,0,0.5);
+            padding: 5px;
+            display: none;
         }
     </style>
 </head>
@@ -181,34 +154,21 @@
                 <div class="healthBar"><div class="healthFill p2" id="p2Health" style="width: 100%;"></div></div>
             </div>
         </div>
-        
         <div id="startScreen">
             <h1>PIXEL SMASH</h1>
             <input type="text" id="p1Input" placeholder="Player 1 Name" maxlength="12" value="">
             <input type="text" id="p2Input" placeholder="Player 2 Name" maxlength="12" value="">
-            <button id="startBtn">SELECT CHARACTERS</button>
+            <button id="startBtn">START GAME</button>
             <div id="controls">
-                <div><span class="controlKey">A/D</span> P1 Move | <span class="controlKey">W</span> Jump | <span class="controlKey">S</span> Attack</div>
-                <div style="margin-top: 8px;"><span class="controlKey">←/→</span> P2 Move | <span class="controlKey">↑</span> Jump | <span class="controlKey">↓</span> Attack</div>
+                <div><span class="controlKey">A/D</span> Move &nbsp; <span class="controlKey">G</span> Jump &nbsp; <span class="controlKey">F</span> Attack</div>
+                <div style="margin-top: 8px;"><span class="controlKey">←/→</span> Move &nbsp; <span class="controlKey">K</span> Jump &nbsp; <span class="controlKey">L</span> Attack</div>
             </div>
         </div>
-        
-        <div id="charSelectScreen">
-            <h2>SELECT CHARACTER</h2>
-            <div class="charGrid" id="charGrid"></div>
-            <button id="charNextBtn" disabled>NEXT: SELECT MAP</button>
-        </div>
-        
-        <div id="mapSelectScreen">
-            <h2>SELECT MAP</h2>
-            <div class="mapGrid" id="mapGrid"></div>
-            <button id="mapStartBtn" disabled>START GAME</button>
-        </div>
-        
         <div id="winnerScreen">
             <div id="winnerText"></div>
             <button id="resetBtn">PLAY AGAIN</button>
         </div>
+        <div id="debug"></div>
     </div>
 
 <script>
@@ -219,6 +179,572 @@
     const ctx = canvas.getContext('2d');
     ctx.imageSmoothingEnabled = false;
 
+    // Audio context with error handling
     let audioCtx = null;
     try {
-        const AudioContext = window.AudioContext || window.webkit
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) {
+            audioCtx = new AudioContext();
+        }
+    } catch(e) {
+        console.log('Audio not supported');
+    }
+
+    function playSound(type) {
+        if (!audioCtx) return;
+        try {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            const now = audioCtx.currentTime;
+            
+            if (type === 'jump') {
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(600, now + 0.1);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now);
+                osc.stop(now + 0.1);
+            } else if (type === 'attack') {
+                osc.frequency.setValueAtTime(200, now);
+                osc.frequency.exponentialRampToValueAtTime(100, now + 0.15);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                osc.start(now);
+                osc.stop(now + 0.15);
+            } else if (type === 'hit') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.exponentialRampToValueAtTime(50, now + 0.2);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                osc.start(now);
+                osc.stop(now + 0.2);
+            } else if (type === 'win') {
+                [440, 554, 659, 880].forEach((freq, i) => {
+                    const o = audioCtx.createOscillator();
+                    const g = audioCtx.createGain();
+                    o.connect(g);
+                    g.connect(audioCtx.destination);
+                    o.type = 'square';
+                    o.frequency.setValueAtTime(freq, now + i * 0.1);
+                    g.gain.setValueAtTime(0.15, now + i * 0.1);
+                    g.gain.exponentialRampToValueAtTime(0.01, now + i * 0.1 + 0.2);
+                    o.start(now + i * 0.1);
+                    o.stop(now + i * 0.1 + 0.2);
+                });
+            }
+        } catch(e) {
+            console.log('Sound error:', e);
+        }
+    }
+
+    let gameRunning = false;
+    let animationId = null;
+    let p1Name = 'Player 1', p2Name = 'Player 2';
+    let currentMap = 0;
+
+    class Player {
+        constructor(x, y, color, isP1) {
+            this.x = x;
+            this.y = y;
+            this.width = 32;
+            this.height = 48;
+            this.vx = 0;
+            this.vy = 0;
+            this.speed = 5;
+            this.jumpPower = -14;
+            this.gravity = 0.7;
+            this.grounded = false;
+            this.color = color;
+            this.isP1 = isP1;
+            this.health = 100;
+            this.maxHealth = 100;
+            this.facing = isP1 ? 1 : -1;
+            this.attacking = false;
+            this.attackCooldown = 0;
+            this.attackFrame = 0;
+            this.hitstun = 0;
+            this.invincible = 0;
+            this.flash = 0;
+        }
+        
+        update() {
+            // Apply gravity
+            this.vy += this.gravity;
+            
+            // Update position
+            this.x += this.vx;
+            this.y += this.vy;
+            
+            // Ground collision
+            const groundY = canvas.height - 80;
+            if (this.y + this.height > groundY) {
+                this.y = groundY - this.height;
+                this.vy = 0;
+                this.grounded = true;
+            }
+            
+            // Screen boundaries
+            if (this.x < 0) {
+                this.x = 0;
+                this.vx = 0;
+            }
+            if (this.x + this.width > canvas.width) {
+                this.x = canvas.width - this.width;
+                this.vx = 0;
+            }
+            
+            // Friction
+            if (this.grounded) {
+                this.vx *= 0.85;
+            } else {
+                this.vx *= 0.98; // Less friction in air
+            }
+            
+            // Cooldowns
+            if (this.attackCooldown > 0) this.attackCooldown--;
+            if (this.hitstun > 0) this.hitstun--;
+            if (this.invincible > 0) this.invincible--;
+            if (this.flash > 0) this.flash--;
+            
+            // Attack animation
+            if (this.attacking) {
+                this.attackFrame++;
+                if (this.attackFrame > 12) {
+                    this.attacking = false;
+                    this.attackFrame = 0;
+                }
+            }
+        }
+        
+        jump() {
+            if (this.grounded && this.hitstun === 0) {
+                this.vy = this.jumpPower;
+                this.grounded = false;
+                playSound('jump');
+            }
+        }
+        
+        attack(other) {
+            if (this.attackCooldown === 0 && this.hitstun === 0 && !this.attacking) {
+                this.attacking = true;
+                this.attackFrame = 0;
+                this.attackCooldown = 25;
+                playSound('attack');
+                
+                // Check hit
+                const attackRange = 45;
+                const attackX = this.x + (this.facing > 0 ? this.width : -attackRange);
+                const attackY = this.y + 10;
+                
+                if (other.invincible === 0 &&
+                    attackX < other.x + other.width &&
+                    attackX + attackRange > other.x &&
+                    attackY < other.y + other.height &&
+                    attackY + 30 > other.y) {
+                    
+                    const damage = 10;
+                    other.health = Math.max(0, other.health - damage);
+                    other.hitstun = 15;
+                    other.invincible = 35;
+                    other.flash = 35;
+                    other.vx = this.facing * 10;
+                    other.vy = -6;
+                    playSound('hit');
+                    
+                    // Create particles
+                    for (let i = 0; i < 6; i++) {
+                        particles.push(new Particle(other.x + other.width/2, other.y + other.height/2));
+                    }
+                }
+            }
+        }
+        
+        draw() {
+            // Flash when hit
+            if (this.flash > 0 && Math.floor(this.flash / 4) % 2 === 0) return;
+            
+            const px = Math.floor(this.x);
+            const py = Math.floor(this.y);
+            
+            // Body
+            ctx.fillStyle = this.color;
+            ctx.fillRect(px + 8, py + 16, 16, 24);
+            
+            // Head
+            ctx.fillStyle = '#ffdbac';
+            ctx.fillRect(px + 8, py, 16, 16);
+            
+            // Eyes
+            ctx.fillStyle = '#000';
+            if (this.facing > 0) {
+                ctx.fillRect(px + 18, py + 6, 4, 4);
+            } else {
+                ctx.fillRect(px + 10, py + 6, 4, 4);
+            }
+            
+            // Arms
+            ctx.fillStyle = this.color;
+            if (this.attacking) {
+                const armExtend = this.attackFrame < 6 ? this.attackFrame * 4 : (12 - this.attackFrame) * 2;
+                if (this.facing > 0) {
+                    ctx.fillRect(px + 24, py + 18, 8 + armExtend, 6);
+                } else {
+                    ctx.fillRect(px - armExtend, py + 18, 8 + armExtend, 6);
+                }
+            } else {
+                ctx.fillRect(px, py + 18, 8, 6);
+                ctx.fillRect(px + 24, py + 18, 8, 6);
+            }
+            
+            // Legs
+            ctx.fillStyle = '#333';
+            ctx.fillRect(px + 8, py + 40, 6, 8);
+            ctx.fillRect(px + 18, py + 40, 6, 8);
+            
+            // Draw name above player
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 12px Courier New, monospace';
+            ctx.textAlign = 'center';
+            const name = this.isP1 ? p1Name : p2Name;
+            ctx.fillText(name, px + 16, py - 8);
+            
+            // Attack effect
+            if (this.attacking && this.attackFrame < 8) {
+                ctx.fillStyle = `rgba(255, 255, 100, ${1 - this.attackFrame/8})`;
+                const fx = this.facing > 0 ? px + 30 : px - 18;
+                ctx.fillRect(fx, py + 8, 20, 24);
+            }
+        }
+    }
+
+    class Particle {
+        constructor(x, y) {
+            this.x = x;
+            this.y = y;
+            this.vx = (Math.random() - 0.5) * 10;
+            this.vy = (Math.random() - 0.5) * 10;
+            this.life = 25;
+            this.color = ['#ff6b6b', '#ffd93d', '#ff8c42', '#ff4757'][Math.floor(Math.random() * 4)];
+            this.size = 3 + Math.random() * 3;
+        }
+        
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            this.vy += 0.4;
+            this.vx *= 0.95;
+            this.life--;
+        }
+        
+        draw() {
+            ctx.fillStyle = this.color;
+            ctx.globalAlpha = this.life / 25;
+            ctx.fillRect(this.x - this.size/2, this.y - this.size/2, this.size, this.size);
+            ctx.globalAlpha = 1;
+        }
+    }
+
+    let player1, player2, particles = [];
+    const keys = {};
+
+    const maps = [
+        {
+            name: 'City',
+            draw: () => {
+                const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                grad.addColorStop(0, '#1a1a2e');
+                grad.addColorStop(1, '#16213e');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Buildings
+                for (let i = 0; i < 10; i++) {
+                    const height = 150 + i * 15;
+                    ctx.fillStyle = `rgba(40, 40, 70, ${0.4 + i * 0.03})`;
+                    ctx.fillRect(i * 80 + 10, canvas.height - 80 - height, 60, height);
+                    // Windows
+                    ctx.fillStyle = 'rgba(255, 255, 150, 0.3)';
+                    for (let w = 0; w < 3; w++) {
+                        for (let h = 0; h < Math.floor(height/30); h++) {
+                            if (Math.random() > 0.5) {
+                                ctx.fillRect(i * 80 + 15 + w * 18, canvas.height - 80 - height + 10 + h * 25, 10, 15);
+                            }
+                        }
+                    }
+                }
+                
+                // Ground
+                ctx.fillStyle = '#2d3436';
+                ctx.fillRect(0, canvas.height - 80, canvas.width, 80);
+                ctx.fillStyle = '#636e72';
+                ctx.fillRect(0, canvas.height - 85, canvas.width, 5);
+            }
+        },
+        {
+            name: 'Forest',
+            draw: () => {
+                const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                grad.addColorStop(0, '#0d3b2e');
+                grad.addColorStop(1, '#1a5f4a');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Trees
+                for (let i = 0; i < 12; i++) {
+                    const x = i * 70 + 20;
+                    const h = 120 + Math.random() * 60;
+                    ctx.fillStyle = `rgba(20, ${60 + i * 8}, ${30 + i * 5}, 0.6)`;
+                    ctx.fillRect(x, canvas.height - 80 - h, 35, h);
+                    // Leaves
+                    ctx.fillStyle = `rgba(30, ${100 + i * 5}, 40, 0.5)`;
+                    ctx.beginPath();
+                    ctx.arc(x + 17, canvas.height - 80 - h, 40, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                // Ground
+                ctx.fillStyle = '#2d5a3d';
+                ctx.fillRect(0, canvas.height - 80, canvas.width, 80);
+                ctx.fillStyle = '#4a7c59';
+                ctx.fillRect(0, canvas.height - 85, canvas.width, 5);
+            }
+        },
+        {
+            name: 'Volcano',
+            draw: () => {
+                const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                grad.addColorStop(0, '#2d1a1a');
+                grad.addColorStop(0.5, '#4a1a1a');
+                grad.addColorStop(1, '#3d1a1a');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Volcano
+                ctx.fillStyle = '#5a2a2a';
+                ctx.beginPath();
+                ctx.moveTo(150, canvas.height - 80);
+                ctx.lineTo(400, canvas.height - 280);
+                ctx.lineTo(650, canvas.height - 80);
+                ctx.closePath();
+                ctx.fill();
+                
+                // Lava
+                ctx.fillStyle = '#8b0000';
+                ctx.beginPath();
+                ctx.moveTo(350, canvas.height - 220);
+                ctx.lineTo(400, canvas.height - 280);
+                ctx.lineTo(450, canvas.height - 220);
+                ctx.closePath();
+                ctx.fill();
+                
+                // Fire particles
+                for (let i = 0; i < 15; i++) {
+                    ctx.fillStyle = `rgba(255, ${80 + Math.random() * 100}, 0, ${0.4 + Math.random() * 0.4})`;
+                    const fx = 380 + Math.random() * 40;
+                    const fy = canvas.height - 260 + Math.random() * 40;
+                    ctx.fillRect(fx, fy, 6, 6);
+                }
+                
+                // Ground
+                ctx.fillStyle = '#3d1a1a';
+                ctx.fillRect(0, canvas.height - 80, canvas.width, 80);
+                ctx.fillStyle = '#5a2a2a';
+                ctx.fillRect(0, canvas.height - 85, canvas.width, 5);
+            }
+        }
+    ];
+
+    // Input handling
+    document.addEventListener('keydown', (e) => {
+        const key = e.key.toLowerCase();
+        keys[key] = true;
+        
+        if (!gameRunning) return;
+        
+        // Prevent default for game keys
+        if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' '].includes(key) || 
+            ['w', 'a', 's', 'd', 'f', 'g', 'k', 'l'].includes(key)) {
+            e.preventDefault();
+        }
+        
+        // P1 controls
+        if (key === 'w') player1.jump();
+        if (key === 'f') player1.attack(player2);
+        
+        // P2 controls
+        if (e.key === 'ArrowUp') player2.jump();
+        if (key === 'l') player2.attack(player1);
+    });
+
+    document.addEventListener('keyup', (e) => {
+        keys[e.key.toLowerCase()] = false;
+    });
+
+    function handleInput() {
+        if (!gameRunning) return;
+        
+        // P1 movement
+        if (player1.hitstun === 0) {
+            if (keys['a']) { 
+                player1.vx = -player1.speed; 
+                player1.facing = -1; 
+            }
+            if (keys['d']) { 
+                player1.vx = player1.speed; 
+                player1.facing = 1; 
+            }
+        }
+        
+        // P2 movement
+        if (player2.hitstun === 0) {
+            if (keys['arrowleft']) { 
+                player2.vx = -player2.speed; 
+                player2.facing = -1; 
+            }
+            if (keys['arrowright']) { 
+                player2.vx = player2.speed; 
+                player2.facing = 1; 
+            }
+        }
+    }
+
+    function updateUI() {
+        const p1Health = document.getElementById('p1Health');
+        const p2Health = document.getElementById('p2Health');
+        if (p1Health) p1Health.style.width = Math.max(0, player1.health) + '%';
+        if (p2Health) p2Health.style.width = Math.max(0, player2.health) + '%';
+    }
+
+    function checkWinner() {
+        if (player1.health <= 0 || player2.health <= 0) {
+            gameRunning = false;
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+            const winner = player1.health > 0 ? p1Name : p2Name;
+            const winnerText = document.getElementById('winnerText');
+            const winnerScreen = document.getElementById('winnerScreen');
+            if (winnerText) winnerText.textContent = winner + ' WINS!';
+            if (winnerScreen) winnerScreen.style.display = 'flex';
+            playSound('win');
+        }
+    }
+
+    function gameLoop() {
+        if (!gameRunning) return;
+        
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw map
+        maps[currentMap].draw();
+        
+        // Handle input
+        handleInput();
+        
+        // Update players
+        player1.update();
+        player2.update();
+        
+        // Draw players
+        player1.draw();
+        player2.draw();
+        
+        // Update and draw particles
+        particles = particles.filter(p => p.life > 0);
+        particles.forEach(p => { p.update(); p.draw(); });
+        
+        // Update UI
+        updateUI();
+        
+        // Check winner
+        checkWinner();
+        
+        if (gameRunning) {
+            animationId = requestAnimationFrame(gameLoop);
+        }
+    }
+
+    function startGame() {
+        // Get player names
+        const p1Input = document.getElementById('p1Input');
+        const p2Input = document.getElementById('p2Input');
+        
+        p1Name = (p1Input && p1Input.value.trim()) || 'Player 1';
+        p2Name = (p2Input && p2Input.value.trim()) || 'Player 2';
+        
+        // Update UI names
+        const p1NameEl = document.getElementById('p1Name');
+        const p2NameEl = document.getElementById('p2Name');
+        if (p1NameEl) p1NameEl.textContent = p1Name;
+        if (p2NameEl) p2NameEl.textContent = p2Name;
+        
+        // Random map
+        currentMap = Math.floor(Math.random() * maps.length);
+        
+        // Create players
+        player1 = new Player(150, 200, '#ff6b6b', true);
+        player2 = new Player(600, 200, '#4ecdc4', false);
+        particles = [];
+        
+        // Hide start screen
+        const startScreen = document.getElementById('startScreen');
+        if (startScreen) startScreen.classList.add('hidden');
+        
+        // Start game
+        gameRunning = true;
+        gameLoop();
+    }
+
+    function resetGame() {
+        gameRunning = false;
+        if (animationId) {
+            cancelAnimationFrame(animationId);
+            animationId = null;
+        }
+        
+        const winnerScreen = document.getElementById('winnerScreen');
+        const startScreen = document.getElementById('startScreen');
+        const p1Input = document.getElementById('p1Input');
+        const p2Input = document.getElementById('p2Input');
+        
+        if (winnerScreen) winnerScreen.style.display = 'none';
+        if (startScreen) startScreen.classList.remove('hidden');
+        if (p1Input) p1Input.value = '';
+        if (p2Input) p2Input.value = '';
+    }
+
+    // Event listeners for buttons
+    const startBtn = document.getElementById('startBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    
+    if (startBtn) startBtn.addEventListener('click', startGame);
+    if (resetBtn) resetBtn.addEventListener('click', resetGame);
+    
+    // Allow Enter key to start
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !gameRunning) {
+            const winnerScreen = document.getElementById('winnerScreen');
+            if (winnerScreen && winnerScreen.style.display === 'flex') {
+                resetGame();
+            } else {
+                startGame();
+            }
+        }
+    });
+    
+    // Initial render
+    maps[0].draw();
+    
+})();
+</script>
+</body>
+</html>
