@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peter's Repository Index</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 {
+            font-size: 3em;
+            text-align: center;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #e94560, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            text-align: center;
+            color: #aaa;
+            margin-bottom: 40px;
+            font-size: 1.2em;
+        }
+        .repo-link {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .repo-link a {
+            color: #4ecdc4;
+            text-decoration: none;
+            font-size: 1.1em;
+        }
+        .repo-link a:hover { text-decoration: underline; }
+        
+        .category {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .category h2 {
+            color: #e94560;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .category h2 span { font-size: 1.3em; }
+        
+        .file-list {
+            list-style: none;
+        }
+        .file-list li {
+            padding: 10px 15px;
+            margin: 5px 0;
+            background: rgba(255,255,255,0.03);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+        .file-list li:hover {
+            background: rgba(255,255,255,0.08);
+            transform: translateX(5px);
+        }
+        .file-list li::before {
+            content: "📄";
+            font-size: 1.2em;
+        }
+        .file-list li.folder::before { content: "📁"; }
+        .file-list li.code::before { content: "💻"; }
+        .file-list li.web::before { content: "🌐"; }
+        .file-list li.game::before { content: "🎮"; }
+        .file-list li.doc::before { content: "📖"; }
+        .file-list li.script::before { content: "⚙️"; }
+        
+        .file-list a {
+            color: #4ecdc4;
+            text-decoration: none;
+        }
+        .file-list a:hover { text-decoration: underline; }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .stat-card .number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #e94560;
+        }
+        .stat-card .label {
+            color: #aaa;
+            margin-top: 5px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #666;
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 2em; }
+            .category { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📦 Peter's Repository</h1>
+        <p class="subtitle">A collection of projects created by Friday</p>
+        
+        <div class="repo-link">
+            <a href="https://github.com/hardihuang/peter" target="_blank">🔗 View on GitHub</a>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="number">5</div>
+                <div class="label">Categories</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">3</div>
+                <div class="label">Games</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">1</div>
+                <div class="label">Embedded</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">∞</div>
+                <div class="label">Possibilities</div>
+            </div>
+        </div>
+        
+        <div class="category">
+            <h2><span>🎮</span> Games</h2>
+            <ul class="file-list">
+                <li class="game">
+                    <a href="https://github.com/hardihuang/peter/blob/main/games/pixel-smash-bros.html" target="_blank">pixel-smash-bros.html</a>
+                    <span style="color:#666;margin-left:auto;">2D PVP fighting game with rainbow animation</span>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="category">
+            <h2><span>🌐</span> Web Pages</h2>
+            <ul class="file-list">
+                <li class="web">
+                    <a href="https://github.com/hardihuang/peter/blob/main/web-pages/intro/index.html" target="_blank">intro/index.html</a>
+                    <span style="color:#666;margin-left:auto;">Friday intro page - terminal style</span>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="category">
+            <h2><span>🔧</span> Embedded / IoT</h2>
+            <ul class="file-list">
+                <li class="code">
+                    <a href="https://github.com/hardihuang/peter/blob/main/embedded/esp32-c3-ws2812-red/esp32-c3-ws2812-red.ino" target="_blank">esp32-c3-ws2812-red/esp32-c3-ws2812-red.ino</a>
+                    <span style="color:#666;margin-left:auto;">ESP32-C3 WS2812 LED control with rainbow</span>
+                </li>
+                <li class="doc">
+                    <a href="https://github.com/hardihuang/peter/blob/main/embedded/esp32-c3-ws2812-red/README.md" target="_blank">esp32-c3-ws2812-red/README.md</a>
+                    <span style="color:#666;margin-left:auto;">Documentation for ESP32 project</span>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="category">
+            <h2><span>💾</span> Backup System</h2>
+            <ul class="file-list">
+                <li class="folder">
+                    <a href="https://github.com/hardihuang/peter/tree/main/friday-backups" target="_blank">friday-backups/</a>
+                    <span style="color:#666;margin-left:auto;">Automated backups (every 2 weeks)</span>
+                </li>
+                <li class="script">
+                    <a href="https://github.com/hardihuang/peter/blob/main/scripts/backup-friday.sh" target="_blank">scripts/backup-friday.sh</a>
+                    <span style="color:#666;margin-left:auto;">Backup automation script</span>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="category">
+            <h2><span>📋</span> Documentation</h2>
+            <ul class="file-list">
+                <li class="doc">
+                    <a href="https://github.com/hardihuang/peter/blob/main/README.md" target="_blank">README.md</a>
+                    <span style="color:#666;margin-left:auto;">Main repository documentation</span>
+                </li>
+            </ul>
+        </div>
+        
+        <footer>
+            <p>🤖 Managed by Friday | 📅 Last updated: March 31, 2025</p>
+            <p style="margin-top:10px;font-size:0.9em;">This page auto-updates when new files are added to the repository</p>
+        </footer>
+    </div>
+</body>
+</html>
