@@ -39,13 +39,8 @@ void setup() {
 }
 
 void loop() {
-  // Keep the LEDs red
-  // You can add animations here if needed
-  
-  // Optional: Blink effect
-  // blinkRed(500);  // Blink every 500ms
-  
-  delay(100);  // Small delay to prevent watchdog issues
+  // Rainbow animation - cycles through all colors
+  rainbowCycle(20);  // 20ms delay between steps
 }
 
 // Set all LEDs to solid RED
@@ -102,5 +97,39 @@ void redChase(int wait) {
       strip.show();
       delay(wait);
     }
+  }
+}
+
+// Rainbow cycle animation
+void rainbowCycle(int wait) {
+  for (long firstPixelHue = 0; firstPixelHue < 5 * 65536; firstPixelHue += 256) {
+    for (int i = 0; i < NUM_LEDS; i++) {
+      // Offset pixel hue by an amount to make one full rainbow cycle
+      int pixelHue = firstPixelHue + (i * 65536L / NUM_LEDS);
+      strip.setPixelColor(i, strip.gamma32(strip.ColorHSV(pixelHue)));
+    }
+    strip.show();
+    delay(wait);
+  }
+}
+
+// Static rainbow - all LEDs show different colors
+void staticRainbow() {
+  for (int i = 0; i < NUM_LEDS; i++) {
+    int hue = map(i, 0, NUM_LEDS - 1, 0, 65535);
+    strip.setPixelColor(i, strip.gamma32(strip.ColorHSV(hue)));
+  }
+  strip.show();
+}
+
+// Rainbow chase - moving rainbow across strip
+void rainbowChase(int wait) {
+  for (int j = 0; j < 256; j++) {
+    for (int i = 0; i < NUM_LEDS; i++) {
+      int hue = ((i * 256 / NUM_LEDS) + j) & 255;
+      strip.setPixelColor(i, strip.ColorHSV(hue * 256, 255, 255));
+    }
+    strip.show();
+    delay(wait);
   }
 }
