@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Peter's Dashboard</title>
+    <title>F.R.I.D.A.Y.</title>
     <style>
         * {
             margin: 0;
@@ -13,55 +13,115 @@
             touch-action: manipulation;
         }
         
+        @font-face {
+            font-family: 'VT323';
+            src: local('VT323'), local('Courier New');
+        }
+        
         body {
             width: 800px;
             height: 480px;
             overflow: hidden;
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            color: #fff;
+            background: #000;
+            font-family: 'Courier New', monospace;
+            color: #0f0;
             font-size: 11px;
+            cursor: text;
+        }
+        
+        /* CRT Effect */
+        .crt::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            z-index: 9999;
         }
         
         .container {
             width: 800px;
             height: 480px;
             display: grid;
-            grid-template-rows: 40px 1fr 50px;
-            padding: 8px;
+            grid-template-rows: 55px 1fr 45px;
+            padding: 10px;
             gap: 8px;
+            position: relative;
+        }
+        
+        /* Scanline animation */
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(480px); }
+        }
+        
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(0, 255, 0, 0.3);
+            animation: scanline 4s linear infinite;
+            pointer-events: none;
+            z-index: 9998;
         }
         
         /* Header */
         .header {
+            border: 1px solid #0f0;
+            background: rgba(0, 255, 0, 0.05);
+            padding: 6px 12px;
+            position: relative;
+        }
+        
+        .header-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(255,255,255,0.05);
-            border-radius: 8px;
-            padding: 0 12px;
-            border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 4px;
         }
         
-        .header h1 {
-            font-size: 16px;
-            font-weight: 600;
-            color: #e94560;
-            text-shadow: 0 0 10px rgba(233,69,96,0.5);
+        .friday-title {
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 8px;
+            color: #0f0;
+            text-shadow: 0 0 10px #0f0, 0 0 20px #0f0;
+        }
+        
+        .subtitle {
+            font-size: 9px;
+            color: #0a0;
+            letter-spacing: 1px;
         }
         
         .datetime {
             display: flex;
-            gap: 15px;
-            font-size: 12px;
-            font-weight: 500;
+            gap: 10px;
+            font-size: 11px;
         }
         
         .datetime span {
-            background: rgba(233,69,96,0.2);
-            padding: 4px 10px;
-            border-radius: 4px;
-            border: 1px solid rgba(233,69,96,0.3);
+            border: 1px solid #0f0;
+            padding: 3px 8px;
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        /* Typing cursor */
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 14px;
+            background: #0f0;
+            animation: blink 1s step-end infinite;
+            margin-left: 2px;
+        }
+        
+        @keyframes blink {
+            50% { opacity: 0; }
         }
         
         /* Main Content */
@@ -69,94 +129,75 @@
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             gap: 8px;
+            overflow: hidden;
         }
         
         .panel {
-            background: rgba(255,255,255,0.03);
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.08);
-            padding: 10px;
+            border: 1px solid #0f0;
+            background: rgba(0, 255, 0, 0.03);
+            padding: 8px;
             overflow: hidden;
         }
         
         .panel-title {
-            font-size: 11px;
-            font-weight: 600;
-            color: #4ecdc4;
-            margin-bottom: 8px;
+            font-size: 10px;
+            color: #0f0;
+            margin-bottom: 6px;
+            border-bottom: 1px solid #0f0;
+            padding-bottom: 3px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            letter-spacing: 2px;
         }
         
         .panel-title::before {
-            content: '';
-            width: 6px;
-            height: 6px;
-            background: #4ecdc4;
-            border-radius: 50%;
-            box-shadow: 0 0 6px #4ecdc4;
+            content: '> ';
         }
         
         /* Server Status */
         .status-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 6px;
+            gap: 5px;
         }
         
         .status-item {
-            background: rgba(0,0,0,0.2);
-            border-radius: 6px;
-            padding: 6px 8px;
-            border-left: 3px solid;
+            border: 1px solid #050;
+            padding: 5px;
+            background: rgba(0, 50, 0, 0.3);
         }
         
-        .status-item.online { border-left-color: #00b894; }
-        .status-item.warning { border-left-color: #fdcb6e; }
-        .status-item.offline { border-left-color: #e17055; }
-        
         .status-label {
-            font-size: 9px;
-            color: #888;
+            font-size: 8px;
+            color: #0a0;
             margin-bottom: 2px;
         }
         
         .status-value {
-            font-size: 11px;
-            font-weight: 600;
+            font-size: 10px;
+            color: #0f0;
         }
         
-        .status-value.online { color: #00b894; }
-        .status-value.warning { color: #fdcb6e; }
-        .status-value.offline { color: #e17055; }
+        .status-value.online { color: #0f0; }
+        .status-value.warn { color: #ff0; }
+        .status-value.offline { color: #f00; }
         
         /* Agent Status */
-        .agent-info {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        
         .agent-card {
-            background: rgba(0,0,0,0.2);
-            border-radius: 6px;
-            padding: 8px;
-            border: 1px solid rgba(78,205,196,0.2);
+            border: 1px solid #050;
+            padding: 6px;
+            margin-bottom: 5px;
+            background: rgba(0, 30, 0, 0.3);
         }
         
         .agent-name {
-            font-size: 11px;
-            font-weight: 600;
-            color: #fff;
-            margin-bottom: 4px;
+            font-size: 10px;
+            color: #0f0;
+            margin-bottom: 3px;
         }
         
         .agent-detail {
-            font-size: 9px;
-            color: #888;
+            font-size: 8px;
+            color: #0a0;
             display: flex;
             justify-content: space-between;
         }
@@ -165,44 +206,49 @@
             display: inline-block;
             width: 6px;
             height: 6px;
+            background: #0f0;
             border-radius: 50%;
-            background: #00b894;
-            box-shadow: 0 0 4px #00b894;
+            margin-left: 5px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
         }
         
         /* Subagents */
         .subagent-list {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 4px;
         }
         
         .subagent-item {
             display: flex;
             align-items: center;
-            gap: 8px;
-            background: rgba(0,0,0,0.2);
-            border-radius: 5px;
-            padding: 6px 8px;
+            gap: 6px;
+            border: 1px solid #030;
+            padding: 4px 6px;
             cursor: pointer;
             transition: all 0.2s;
-            border: 1px solid transparent;
+            background: rgba(0, 20, 0, 0.3);
         }
         
         .subagent-item:hover, .subagent-item:active {
-            background: rgba(233,69,96,0.15);
-            border-color: rgba(233,69,96,0.3);
+            border-color: #0f0;
+            background: rgba(0, 255, 0, 0.1);
         }
         
         .subagent-icon {
-            width: 20px;
-            height: 20px;
-            border-radius: 4px;
+            width: 16px;
+            height: 16px;
+            border: 1px solid #0f0;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
-            background: rgba(233,69,96,0.3);
+            font-size: 8px;
+            background: rgba(0, 255, 0, 0.1);
         }
         
         .subagent-info {
@@ -210,314 +256,44 @@
         }
         
         .subagent-name {
-            font-size: 10px;
-            font-weight: 500;
+            font-size: 9px;
+            color: #0f0;
         }
         
         .subagent-task {
-            font-size: 8px;
-            color: #888;
+            font-size: 7px;
+            color: #050;
         }
         
         .subagent-status {
-            width: 5px;
-            height: 5px;
+            width: 4px;
+            height: 4px;
             border-radius: 50%;
         }
         
-        .subagent-status.running { background: #00b894; box-shadow: 0 0 4px #00b894; }
-        .subagent-status.idle { background: #74b9ff; }
-        .subagent-status.error { background: #e17055; }
+        .subagent-status.running { background: #0f0; box-shadow: 0 0 4px #0f0; }
+        .subagent-status.idle { background: #050; }
+        .subagent-status.error { background: #f00; }
         
-        /* Games & Sites */
+        /* Apps */
         .app-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
+            gap: 5px;
         }
         
         .app-item {
             aspect-ratio: 1;
-            background: rgba(255,255,255,0.05);
-            border-radius: 8px;
+            border: 1px solid #050;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 4px;
+            gap: 3px;
             cursor: pointer;
             transition: all 0.2s;
-            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0, 30, 0, 0.3);
             padding: 4px;
         }
         
-        .app-item:hover, .app-item:active {
-            background: rgba(233,69,96,0.15);
-            border-color: rgba(233,69,96,0.4);
-            transform: scale(0.98);
-        }
-        
-        .app-icon {
-            width: 28px;
-            height: 28px;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-        }
-        
-        .app-icon.game { background: linear-gradient(135deg, #e94560, #ff6b6b); }
-        .app-icon.site { background: linear-gradient(135deg, #4ecdc4, #44b3ab); }
-        .app-icon.tool { background: linear-gradient(135deg, #a29bfe, #6c5ce7); }
-        
-        .app-name {
-            font-size: 8px;
-            text-align: center;
-            line-height: 1.2;
-        }
-        
-        /* Bottom Bar */
-        .bottom-bar {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-        
-        .quick-action {
-            flex: 1;
-            height: 100%;
-            background: rgba(255,255,255,0.05);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid rgba(255,255,255,0.1);
-            font-size: 11px;
-            font-weight: 500;
-        }
-        
-        .quick-action:hover, .quick-action:active {
-            background: rgba(233,69,96,0.2);
-            border-color: rgba(233,69,96,0.4);
-        }
-        
-        .quick-action-icon {
-            width: 18px;
-            height: 18px;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-        }
-        
-        /* Scrollbar hide */
-        ::-webkit-scrollbar { display: none; }
-        
-        /* Touch feedback */
-        @media (hover: none) {
-            .subagent-item:active, .app-item:active, .quick-action:active {
-                transform: scale(0.95);
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1>🤖 PETER'S DASHBOARD</h1>
-            <div class="datetime">
-                <span id="time">00:00:00</span>
-                <span id="date">2026-01-01</span>
-                <span id="tz">CST</span>
-            </div>
-        </div>
-        
-        <!-- Main Content -->
-        <div class="main">
-            <!-- Server Status Panel -->
-            <div class="panel">
-                <div class="panel-title">Server Status</div>
-                <div class="status-grid">
-                    <div class="status-item online">
-                        <div class="status-label">Main Server</div>
-                        <div class="status-value online">● ONLINE</div>
-                    </div>
-                    <div class="status-item online">
-                        <div class="status-label">Gateway</div>
-                        <div class="status-value online">● ACTIVE</div>
-                    </div>
-                    <div class="status-item online">
-                        <div class="status-label">API Status</div>
-                        <div class="status-value online">● HEALTHY</div>
-                    </div>
-                    <div class="status-item warning">
-                        <div class="status-label">Load</div>
-                        <div class="status-value warning">● 67%</div>
-                    </div>
-                    <div class="status-item online">
-                        <div class="status-label">Memory</div>
-                        <div class="status-value online">● 4.2GB</div>
-                    </div>
-                    <div class="status-item online">
-                        <div class="status-label">Uptime</div>
-                        <div class="status-value online">● 14d 3h</div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Agent Status Panel -->
-            <div class="panel">
-                <div class="panel-title">Agent Status</div>
-                <div class="agent-info">
-                    <div class="agent-card">
-                        <div class="agent-name">Friday <span class="agent-status"></span></div>
-                        <div class="agent-detail">
-                            <span>Model: kimi-k2.5</span>
-                            <span>v2.2.1</span>
-                        </div>
-                    </div>
-                    <div class="subagent-list">
-                        <div class="subagent-item" onclick="alert('Coder agent')">
-                            <div class="subagent-icon">💻</div>
-                            <div class="subagent-info">
-                                <div class="subagent-name">Coder</div>
-                                <div class="subagent-task">Idle</div>
-                            </div>
-                            <div class="subagent-status idle"></div>
-                        </div>
-                        <div class="subagent-item" onclick="alert('Browser agent')">
-                            <div class="subagent-icon">🌐</div>
-                            <div class="subagent-info">
-                                <div class="subagent-name">Browser</div>
-                                <div class="subagent-task">Active</div>
-                            </div>
-                            <div class="subagent-status running"></div>
-                        </div>
-                        <div class="subagent-item" onclick="alert('Research agent')">
-                            <div class="subagent-icon">🔍</div>
-                            <div class="subagent-info">
-                                <div class="subagent-name">Research</div>
-                                <div class="subagent-task">Idle</div>
-                            </div>
-                            <div class="subagent-status idle"></div>
-                        </div>
-                        <div class="subagent-item" onclick="alert('Git agent')">
-                            <div class="subagent-icon">📦</div>
-                            <div class="subagent-info">
-                                <div class="subagent-name">Git</div>
-                                <div class="subagent-task">Idle</div>
-                            </div>
-                            <div class="subagent-status idle"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Games & Sites Panel -->
-            <div class="panel">
-                <div class="panel-title">Games & Sites</div>
-                <div class="app-grid">
-                    <div class="app-item" onclick="window.open('the-arena.html','_blank')">
-                        <div class="app-icon game">⚔️</div>
-                        <div class="app-name">The Arena</div>
-                    </div>
-                    <div class="app-item" onclick="window.open('pixel-smash-bros.html','_blank')">
-                        <div class="app-icon game">👊</div>
-                        <div class="app-name">Pixel Smash</div>
-                    </div>
-                    <div class="app-item" onclick="window.open('snake.html','_blank')">
-                        <div class="app-icon game">🐍</div>
-                        <div class="app-name">Snake</div>
-                    </div>
-                    <div class="app-item" onclick="alert('Portfolio')">
-                        <div class="app-icon site">📁</div>
-                        <div class="app-name">Portfolio</div>
-                    </div>
-                    <div class="app-item" onclick="alert('Blog')">
-                        <div class="app-icon site">📝</div>
-                        <div class="app-name">Blog</div>
-                    </div>
-                    <div class="app-item" onclick="alert('Tools')">
-                        <div class="app-icon tool">🛠️</div>
-                        <div class="app-name">Tools</div>
-                    </div>
-                    <div class="app-item" onclick="alert('Docs')">
-                        <div class="app-icon site">📚</div>
-                        <div class="app-name">Docs</div>
-                    </div>
-                    <div class="app-item" onclick="alert('API')">
-                        <div class="app-icon tool">🔌</div>
-                        <div class="app-name">API</div>
-                    </div>
-                    <div class="app-item" onclick="alert('Settings')">
-                        <div class="app-icon tool">⚙️</div>
-                        <div class="app-name">Settings</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Bottom Bar -->
-        <div class="bottom-bar">
-            <div class="quick-action" onclick="alert('Terminal')">
-                <div class="quick-action-icon" style="background: #2d3436;">⌨️</div>
-                <span>Terminal</span>
-            </div>
-            <div class="quick-action" onclick="alert('Files')">
-                <div class="quick-action-icon" style="background: #0984e3;">📂</div>
-                <span>Files</span>
-            </div>
-            <div class="quick-action" onclick="alert('Logs')">
-                <div class="quick-action-icon" style="background: #00b894;">📊</div>
-                <span>Logs</span>
-            </div>
-            <div class="quick-action" onclick="alert('Restart')">
-                <div class="quick-action-icon" style="background: #e17055;">🔄</div>
-                <span>Restart</span>
-            </div>
-        </div>
-    </div>
-    
-    <script>
-        // Update time for China (CST)
-        function updateTime() {
-            const now = new Date();
-            const cst = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Shanghai' }));
-            
-            const timeStr = cst.toLocaleTimeString('en-US', { 
-                hour12: false,
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
-            
-            const dateStr = cst.toLocaleDateString('zh-CN', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit'
-            });
-            
-            document.getElementById('time').textContent = timeStr;
-            document.getElementById('date').textContent = dateStr;
-        }
-        
-        updateTime();
-        setInterval(updateTime, 1000);
-        
-        // Simulate live updates
-        setInterval(() => {
-            const loads = ['65%', '67%', '68%', '66%', '64%'];
-            const mems = ['4.1GB', '4.2GB', '4.3GB', '4.2GB', '4.1GB'];
-            const rand = Math.floor(Math.random() * loads.length);
-            
-            // Update would happen here in real implementation
-        }, 5000);
-    </script>
-</body>
-</html>
+        .app-item:hover, .app
