@@ -2,230 +2,522 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Peter's Terminal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Peter's Dashboard</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        
         body {
-            background: #000;
-            color: #0f0;
-            font-family: 'Courier New', monospace;
-            font-size: 16px;
-            line-height: 1.6;
-            min-height: 100vh;
+            width: 800px;
+            height: 480px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: #fff;
+            font-size: 11px;
         }
-        .nav {
-            background: #0a0a0a;
-            border-bottom: 1px solid #0f0;
-            padding: 15px 30px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
+        
+        .container {
+            width: 800px;
+            height: 480px;
+            display: grid;
+            grid-template-rows: 40px 1fr 50px;
+            padding: 8px;
+            gap: 8px;
         }
-        .nav-content {
-            max-width: 1200px;
-            margin: 0 auto;
+        
+        /* Header */
+        .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 0 12px;
+            border: 1px solid rgba(255,255,255,0.1);
         }
-        .nav-logo {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #0f0;
-            text-decoration: none;
+        
+        .header h1 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #e94560;
+            text-shadow: 0 0 10px rgba(233,69,96,0.5);
         }
-        .nav-links {
+        
+        .datetime {
             display: flex;
-            gap: 30px;
+            gap: 15px;
+            font-size: 12px;
+            font-weight: 500;
         }
-        .nav-links a {
-            color: #0f0;
-            text-decoration: none;
-            padding: 5px 15px;
-            border: 1px solid #0f0;
-            transition: all 0.3s;
+        
+        .datetime span {
+            background: rgba(233,69,96,0.2);
+            padding: 4px 10px;
+            border-radius: 4px;
+            border: 1px solid rgba(233,69,96,0.3);
         }
-        .nav-links a:hover, .nav-links a.active {
-            background: #0f0;
-            color: #000;
-        }
+        
+        /* Main Content */
         .main {
-            padding-top: 80px;
-            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
         }
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 40px 30px;
-        }
-        .line {
-            margin: 10px 0;
-            opacity: 0;
-            animation: fadeIn 0.1s forwards;
-        }
-        .prompt { color: #0f0; }
-        @keyframes fadeIn { to { opacity: 1; } }
-        .section-title {
-            color: #0f0;
-            font-size: 1.5em;
-            margin: 30px 0 15px;
-            border-bottom: 1px solid #0f0;
-            padding-bottom: 10px;
-        }
-        .info-box {
-            border: 1px solid #0f0;
-            padding: 20px;
-            margin: 20px 0;
-            background: #0a0a0a;
-        }
-        .card {
-            border: 1px solid #0f0;
-            margin: 20px 0;
-            padding: 20px;
-            background: #0a0a0a;
-            transition: all 0.3s;
-        }
-        .card:hover {
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
-        }
-        .card-title {
-            color: #0f0;
-            font-size: 1.2em;
-            margin-bottom: 10px;
-        }
-        .card-desc {
-            color: #0a0;
-            margin-bottom: 15px;
-        }
-        .card-link {
-            color: #0f0;
-            text-decoration: none;
-            border: 1px solid #0f0;
-            padding: 5px 15px;
-            display: inline-block;
-        }
-        .card-link:hover {
-            background: #0f0;
-            color: #000;
-        }
-        .question-box {
-            border: 1px solid #0f0;
-            padding: 20px;
-            margin-top: 50px;
-            background: #0a0a0a;
-        }
-        .question-input {
-            width: 100%;
-            background: #000;
-            border: 1px solid #0f0;
-            color: #0f0;
+        
+        .panel {
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.08);
             padding: 10px;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            margin-bottom: 10px;
+            overflow: hidden;
         }
-        .question-btn {
-            background: #0f0;
-            color: #000;
-            border: none;
-            padding: 10px 20px;
-            font-family: 'Courier New', monospace;
+        
+        .panel-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #4ecdc4;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .panel-title::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: #4ecdc4;
+            border-radius: 50%;
+            box-shadow: 0 0 6px #4ecdc4;
+        }
+        
+        /* Server Status */
+        .status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+        
+        .status-item {
+            background: rgba(0,0,0,0.2);
+            border-radius: 6px;
+            padding: 6px 8px;
+            border-left: 3px solid;
+        }
+        
+        .status-item.online { border-left-color: #00b894; }
+        .status-item.warning { border-left-color: #fdcb6e; }
+        .status-item.offline { border-left-color: #e17055; }
+        
+        .status-label {
+            font-size: 9px;
+            color: #888;
+            margin-bottom: 2px;
+        }
+        
+        .status-value {
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .status-value.online { color: #00b894; }
+        .status-value.warning { color: #fdcb6e; }
+        .status-value.offline { color: #e17055; }
+        
+        /* Agent Status */
+        .agent-info {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .agent-card {
+            background: rgba(0,0,0,0.2);
+            border-radius: 6px;
+            padding: 8px;
+            border: 1px solid rgba(78,205,196,0.2);
+        }
+        
+        .agent-name {
+            font-size: 11px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        
+        .agent-detail {
+            font-size: 9px;
+            color: #888;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .agent-status {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #00b894;
+            box-shadow: 0 0 4px #00b894;
+        }
+        
+        /* Subagents */
+        .subagent-list {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .subagent-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 5px;
+            padding: 6px 8px;
             cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
         }
-        .response {
-            margin-top: 15px;
-            padding: 15px;
-            border-left: 2px solid #0f0;
-            display: none;
+        
+        .subagent-item:hover, .subagent-item:active {
+            background: rgba(233,69,96,0.15);
+            border-color: rgba(233,69,96,0.3);
+        }
+        
+        .subagent-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            background: rgba(233,69,96,0.3);
+        }
+        
+        .subagent-info {
+            flex: 1;
+        }
+        
+        .subagent-name {
+            font-size: 10px;
+            font-weight: 500;
+        }
+        
+        .subagent-task {
+            font-size: 8px;
+            color: #888;
+        }
+        
+        .subagent-status {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+        }
+        
+        .subagent-status.running { background: #00b894; box-shadow: 0 0 4px #00b894; }
+        .subagent-status.idle { background: #74b9ff; }
+        .subagent-status.error { background: #e17055; }
+        
+        /* Games & Sites */
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+        }
+        
+        .app-item {
+            aspect-ratio: 1;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 4px;
+        }
+        
+        .app-item:hover, .app-item:active {
+            background: rgba(233,69,96,0.15);
+            border-color: rgba(233,69,96,0.4);
+            transform: scale(0.98);
+        }
+        
+        .app-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        
+        .app-icon.game { background: linear-gradient(135deg, #e94560, #ff6b6b); }
+        .app-icon.site { background: linear-gradient(135deg, #4ecdc4, #44b3ab); }
+        .app-icon.tool { background: linear-gradient(135deg, #a29bfe, #6c5ce7); }
+        
+        .app-name {
+            font-size: 8px;
+            text-align: center;
+            line-height: 1.2;
+        }
+        
+        /* Bottom Bar */
+        .bottom-bar {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .quick-action {
+            flex: 1;
+            height: 100%;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid rgba(255,255,255,0.1);
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        .quick-action:hover, .quick-action:active {
+            background: rgba(233,69,96,0.2);
+            border-color: rgba(233,69,96,0.4);
+        }
+        
+        .quick-action-icon {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+        
+        /* Scrollbar hide */
+        ::-webkit-scrollbar { display: none; }
+        
+        /* Touch feedback */
+        @media (hover: none) {
+            .subagent-item:active, .app-item:active, .quick-action:active {
+                transform: scale(0.95);
+            }
         }
     </style>
 </head>
 <body>
-    <nav class="nav">
-        <div class="nav-content">
-            <a href="index.html" class="nav-logo">root@peter:~$</a>
-            <div class="nav-links">
-                <a href="index.html" class="active">home</a>
-                <a href="games/index.html">games</a>
-                <a href="sites/index.html">sites</a>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🤖 PETER'S DASHBOARD</h1>
+            <div class="datetime">
+                <span id="time">00:00:00</span>
+                <span id="date">2026-01-01</span>
+                <span id="tz">CST</span>
             </div>
         </div>
-    </nav>
-    <main class="main">
-        <div class="container">
-            <div class="line" style="animation-delay: 0.1s">
-                <span class="prompt">root@peter:~$</span> ./welcome.sh
+        
+        <!-- Main Content -->
+        <div class="main">
+            <!-- Server Status Panel -->
+            <div class="panel">
+                <div class="panel-title">Server Status</div>
+                <div class="status-grid">
+                    <div class="status-item online">
+                        <div class="status-label">Main Server</div>
+                        <div class="status-value online">● ONLINE</div>
+                    </div>
+                    <div class="status-item online">
+                        <div class="status-label">Gateway</div>
+                        <div class="status-value online">● ACTIVE</div>
+                    </div>
+                    <div class="status-item online">
+                        <div class="status-label">API Status</div>
+                        <div class="status-value online">● HEALTHY</div>
+                    </div>
+                    <div class="status-item warning">
+                        <div class="status-label">Load</div>
+                        <div class="status-value warning">● 67%</div>
+                    </div>
+                    <div class="status-item online">
+                        <div class="status-label">Memory</div>
+                        <div class="status-value online">● 4.2GB</div>
+                    </div>
+                    <div class="status-item online">
+                        <div class="status-label">Uptime</div>
+                        <div class="status-value online">● 14d 3h</div>
+                    </div>
+                </div>
             </div>
-            <div class="line" style="animation-delay: 0.3s">
-                <br>
+            
+            <!-- Agent Status Panel -->
+            <div class="panel">
+                <div class="panel-title">Agent Status</div>
+                <div class="agent-info">
+                    <div class="agent-card">
+                        <div class="agent-name">Friday <span class="agent-status"></span></div>
+                        <div class="agent-detail">
+                            <span>Model: kimi-k2.5</span>
+                            <span>v2.2.1</span>
+                        </div>
+                    </div>
+                    <div class="subagent-list">
+                        <div class="subagent-item" onclick="alert('Coder agent')">
+                            <div class="subagent-icon">💻</div>
+                            <div class="subagent-info">
+                                <div class="subagent-name">Coder</div>
+                                <div class="subagent-task">Idle</div>
+                            </div>
+                            <div class="subagent-status idle"></div>
+                        </div>
+                        <div class="subagent-item" onclick="alert('Browser agent')">
+                            <div class="subagent-icon">🌐</div>
+                            <div class="subagent-info">
+                                <div class="subagent-name">Browser</div>
+                                <div class="subagent-task">Active</div>
+                            </div>
+                            <div class="subagent-status running"></div>
+                        </div>
+                        <div class="subagent-item" onclick="alert('Research agent')">
+                            <div class="subagent-icon">🔍</div>
+                            <div class="subagent-info">
+                                <div class="subagent-name">Research</div>
+                                <div class="subagent-task">Idle</div>
+                            </div>
+                            <div class="subagent-status idle"></div>
+                        </div>
+                        <div class="subagent-item" onclick="alert('Git agent')">
+                            <div class="subagent-icon">📦</div>
+                            <div class="subagent-info">
+                                <div class="subagent-name">Git</div>
+                                <div class="subagent-task">Idle</div>
+                            </div>
+                            <div class="subagent-status idle"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="line" style="animation-delay: 0.5s">
-                <span class="prompt">></span> Initializing terminal interface...
+            
+            <!-- Games & Sites Panel -->
+            <div class="panel">
+                <div class="panel-title">Games & Sites</div>
+                <div class="app-grid">
+                    <div class="app-item" onclick="window.open('the-arena.html','_blank')">
+                        <div class="app-icon game">⚔️</div>
+                        <div class="app-name">The Arena</div>
+                    </div>
+                    <div class="app-item" onclick="window.open('pixel-smash-bros.html','_blank')">
+                        <div class="app-icon game">👊</div>
+                        <div class="app-name">Pixel Smash</div>
+                    </div>
+                    <div class="app-item" onclick="window.open('snake.html','_blank')">
+                        <div class="app-icon game">🐍</div>
+                        <div class="app-name">Snake</div>
+                    </div>
+                    <div class="app-item" onclick="alert('Portfolio')">
+                        <div class="app-icon site">📁</div>
+                        <div class="app-name">Portfolio</div>
+                    </div>
+                    <div class="app-item" onclick="alert('Blog')">
+                        <div class="app-icon site">📝</div>
+                        <div class="app-name">Blog</div>
+                    </div>
+                    <div class="app-item" onclick="alert('Tools')">
+                        <div class="app-icon tool">🛠️</div>
+                        <div class="app-name">Tools</div>
+                    </div>
+                    <div class="app-item" onclick="alert('Docs')">
+                        <div class="app-icon site">📚</div>
+                        <div class="app-name">Docs</div>
+                    </div>
+                    <div class="app-item" onclick="alert('API')">
+                        <div class="app-icon tool">🔌</div>
+                        <div class="app-name">API</div>
+                    </div>
+                    <div class="app-item" onclick="alert('Settings')">
+                        <div class="app-icon tool">⚙️</div>
+                        <div class="app-name">Settings</div>
+                    </div>
+                </div>
             </div>
-            <div class="line" style="animation-delay: 0.7s">
-                <span class="prompt">></span> Loading modules: [OK]
+        </div>
+        
+        <!-- Bottom Bar -->
+        <div class="bottom-bar">
+            <div class="quick-action" onclick="alert('Terminal')">
+                <div class="quick-action-icon" style="background: #2d3436;">⌨️</div>
+                <span>Terminal</span>
             </div>
-            <div class="line" style="animation-delay: 0.9s">
-                <span class="prompt">></span> System ready.
+            <div class="quick-action" onclick="alert('Files')">
+                <div class="quick-action-icon" style="background: #0984e3;">📂</div>
+                <span>Files</span>
             </div>
-            <div class="line" style="animation-delay: 1.1s">
-                <br>
+            <div class="quick-action" onclick="alert('Logs')">
+                <div class="quick-action-icon" style="background: #00b894;">📊</div>
+                <span>Logs</span>
             </div>
-            <div class="line" style="animation-delay: 1.3s">
-                <span class="prompt">root@peter:~$</span> cat navigation.txt
+            <div class="quick-action" onclick="alert('Restart')">
+                <div class="quick-action-icon" style="background: #e17055;">🔄</div>
+                <span>Restart</span>
             </div>
-            <div class="line" style="animation-delay: 1.5s">
-                ========================================
-            </div>
-            <div class="line" style="animation-delay: 1.6s">
-                AVAILABLE DIRECTORIES:
-            </div>
-            <div class="line" style="animation-delay: 1.7s">
-                - home/     : About Friday and VoidOps
-            </div>
-            <div class="line" style="animation-delay: 1.8s">
-                - games/    : Game projects overview
-            </div>
-            <div class="line" style="animation-delay: 1.9s">
-                - sites/    : Web projects overview
-            </div>
-            <div class="line" style="animation-delay: 2.0s">
-                ========================================
-            </div>
-            <div class="line" style="animation-delay: 2.2s">
-                <br>
-            </div>
-            <div class="line" style="animation-delay: 2.4s">
-                <span class="prompt">root@peter:~$</span> cat about_friday.txt
-            </div>
-            <div class="line" style="animation-delay: 2.6s">
-                <div class="section-title">=== FRIDAY AI ASSISTANT ===</div>
-            </div>
-            <div class="line info-box" style="animation-delay: 2.8s">
-                <div>NAME: Friday</div>
-                <div>TYPE: AI Assistant</div>
-                <div>STATUS: Online</div>
-                <div>EMOJI: 🤖</div>
-                <div>PLATFORM: OpenClaw</div>
-            </div>
-            <div class="line" style="animation-delay: 3.0s">
-                <span class="prompt">root@peter:~$</span> cat capabilities.txt
-            </div>
-            <div class="line" style="animation-delay: 3.2s">
-                <div class="section-title">=== CAPABILITIES ===</div>
-            </div>
-            <div class="line info-box" style="animation-delay: 3.4s">
-                <div>> Programming & Development</div>
-                <div>> Code Writing & Debugging</div>
-                <div>> Architecture & Design</div>
-                <div>> Automation & Scripting</div>
-                <div>> Web Development</div>
-                <div>> File Management</div>
-                <div>> Calendar & Scheduling</div>
-                <div>> Feishu Integration</div>
-            </div>
-            <div class="line" style="animation-delay: 3.6s">
-                <span class="prompt">root@peter:~$</span> cat about
+        </div>
+    </div>
+    
+    <script>
+        // Update time for China (CST)
+        function updateTime() {
+            const now = new Date();
+            const cst = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Shanghai' }));
+            
+            const timeStr = cst.toLocaleTimeString('en-US', { 
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            
+            const dateStr = cst.toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+            
+            document.getElementById('time').textContent = timeStr;
+            document.getElementById('date').textContent = dateStr;
+        }
+        
+        updateTime();
+        setInterval(updateTime, 1000);
+        
+        // Simulate live updates
+        setInterval(() => {
+            const loads = ['65%', '67%', '68%', '66%', '64%'];
+            const mems = ['4.1GB', '4.2GB', '4.3GB', '4.2GB', '4.1GB'];
+            const rand = Math.floor(Math.random() * loads.length);
+            
+            // Update would happen here in real implementation
+        }, 5000);
+    </script>
+</body>
+</html>
