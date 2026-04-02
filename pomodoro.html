@@ -9,33 +9,76 @@
         body { width: 800px; height: 480px; overflow: hidden; background: #000; color: #0f0; font-family: 'Courier New', monospace; }
         .container { width: 800px; height: 480px; display: grid; grid-template-rows: 44px 1fr 60px; padding: 8px; gap: 6px; }
         .header { border: 1px solid #0f0; padding: 4px 8px; display: flex; gap: 6px; align-items: center; }
-        .nav-btn { border: 1px solid #0f0; padding: 6px 12px; cursor: pointer; font-size: 11px; min-height: 32px; display: flex; align-items: center; justify-content: center; }
+        .nav-btn { border: 1px solid #0f0; padding: 6px 10px; cursor: pointer; font-size: 10px; min-height: 32px; display: flex; align-items: center; justify-content: center; }
         .nav-btn:hover { background: rgba(0,255,0,0.15); }
         .nav-btn.active { background: rgba(0,255,0,0.25); }
-        .back-btn { margin-right: auto; min-width: 70px; }
+        .back-btn { margin-right: auto; min-width: 60px; }
         .main { border: 1px solid #0f0; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
-        .timer-display { font-size: 120px; font-weight: bold; letter-spacing: 8px; text-shadow: 0 0 20px #0f0; }
-        .timer-display.work { color: #0f0; }
-        .timer-display.break { color: #0af; text-shadow: 0 0 20px #0af; }
-        .timer-display.longbreak { color: #a0f; text-shadow: 0 0 20px #a0f; }
-        .status { position: absolute; top: 15px; font-size: 14px; color: #080; letter-spacing: 3px; }
+        .timer-area { position: relative; width: 100%; height: 180px; display: flex; align-items: center; justify-content: center; }
+        .status { position: absolute; top: 10px; font-size: 12px; color: #080; letter-spacing: 2px; }
         .status.active { color: #0f0; }
-        .sessions { position: absolute; bottom: 15px; font-size: 12px; color: #080; }
-        .dot { display: inline-block; width: 12px; height: 12px; border: 1px solid #0f0; margin: 0 4px; border-radius: 50%; }
+        .sessions { position: absolute; bottom: 10px; font-size: 11px; color: #080; }
+        .dot { display: inline-block; width: 10px; height: 10px; border: 1px solid #0f0; margin: 0 3px; border-radius: 50%; }
         .dot.done { background: #0f0; }
-        .controls { display: flex; gap: 15px; margin-top: 25px; }
-        .btn { border: 1px solid #0f0; padding: 15px 35px; cursor: pointer; font-size: 16px; min-width: 120px; text-align: center; }
+        .controls { display: flex; gap: 12px; margin-top: 10px; }
+        .btn { border: 1px solid #0f0; padding: 12px 28px; cursor: pointer; font-size: 14px; min-width: 100px; text-align: center; }
         .btn:hover { background: rgba(0,255,0,0.15); }
         .btn.primary { background: rgba(0,255,0,0.2); font-weight: bold; }
-        .bottom { border: 1px solid #0f0; padding: 8px; display: flex; gap: 15px; align-items: center; justify-content: center; }
-        .setting { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-        .setting label { font-size: 9px; color: #080; }
-        .setting input { background: #000; border: 1px solid #050; color: #0f0; padding: 6px; font-family: 'Courier New', monospace; font-size: 14px; width: 50px; text-align: center; }
+        .bottom { border: 1px solid #0f0; padding: 6px; display: flex; gap: 10px; align-items: center; justify-content: center; }
+        .setting { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+        .setting label { font-size: 8px; color: #080; }
+        .setting input { background: #000; border: 1px solid #050; color: #0f0; padding: 4px; font-family: 'Courier New', monospace; font-size: 12px; width: 40px; text-align: center; }
         .setting input:focus { border-color: #0f0; outline: none; }
         .scanline { position: fixed; top: 0; left: 0; width: 100%; height: 2px; background: rgba(0,255,0,0.25); animation: scan 3s linear infinite; pointer-events: none; }
         @keyframes scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(480px); } }
-        .notification { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 2px solid #0f0; background: #000; padding: 40px 60px; font-size: 28px; display: none; z-index: 100; box-shadow: 0 0 40px rgba(0,255,0,0.5); }
+        .notification { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 2px solid #0f0; background: #000; padding: 30px 50px; font-size: 24px; display: none; z-index: 100; box-shadow: 0 0 40px rgba(0,255,0,0.5); }
         .notification.show { display: block; }
+        
+        /* Timer Styles */
+        .timer-view { display: none; }
+        .timer-view.active { display: flex; }
+        
+        /* Digital */
+        .digital { font-size: 90px; font-weight: bold; letter-spacing: 6px; text-shadow: 0 0 20px #0f0; }
+        .digital.work { color: #0f0; }
+        .digital.break { color: #0af; text-shadow: 0 0 20px #0af; }
+        .digital.longbreak { color: #a0f; text-shadow: 0 0 20px #a0f; }
+        
+        /* Analog */
+        .analog { width: 160px; height: 160px; border: 3px solid #0f0; border-radius: 50%; position: relative; }
+        .analog.break { border-color: #0af; }
+        .analog.longbreak { border-color: #a0f; }
+        .analog-marker { position: absolute; width: 2px; height: 8px; background: #0f0; left: 50%; margin-left: -1px; top: 4px; transform-origin: 50% 76px; }
+        .analog.break .analog-marker { background: #0af; }
+        .analog.longbreak .analog-marker { background: #a0f; }
+        .analog-hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom center; background: #0f0; }
+        .analog-hand.minute { width: 3px; height: 60px; margin-left: -1.5px; }
+        .analog-hand.second { width: 1px; height: 70px; margin-left: -0.5px; background: #f55; }
+        .analog-center { position: absolute; width: 8px; height: 8px; background: #0f0; border-radius: 50%; top: 50%; left: 50%; margin: -4px 0 0 -4px; }
+        
+        /* Flip */
+        .flip-container { display: flex; gap: 6px; align-items: center; }
+        .flip-digit { width: 50px; height: 75px; background: #050; border: 2px solid #0f0; border-radius: 4px; position: relative; overflow: hidden; }
+        .flip-digit.break { border-color: #0af; }
+        .flip-digit.longbreak { border-color: #a0f; }
+        .flip-text { position: absolute; width: 100%; text-align: center; font-size: 60px; line-height: 75px; }
+        .flip-sep { font-size: 60px; }
+        
+        /* Ring */
+        .ring-container { width: 160px; height: 160px; position: relative; }
+        .ring-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+        .ring-bg { fill: none; stroke: #050; stroke-width: 8; }
+        .ring-progress { fill: none; stroke: #0f0; stroke-width: 8; stroke-linecap: round; stroke-dasharray: 502; stroke-dashoffset: 0; }
+        .ring-progress.break { stroke: #0af; }
+        .ring-progress.longbreak { stroke: #a0f; }
+        .ring-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 32px; font-weight: bold; }
+        
+        /* Bars */
+        .bars { display: flex; gap: 3px; align-items: flex-end; height: 100px; }
+        .bar { width: 16px; background: #050; border: 1px solid #0f0; }
+        .bar.active { background: #0f0; }
+        .bar.break.active { background: #0af; border-color: #0af; }
+        .bar.longbreak.active { background: #a0f; border-color: #a0f; }
     </style>
 </head>
 <body>
@@ -47,16 +90,45 @@
             <div class="nav-btn active" onclick="setMode('work')" id="btn-work">WORK</div>
             <div class="nav-btn" onclick="setMode('short')" id="btn-short">SHORT</div>
             <div class="nav-btn" onclick="setMode('long')" id="btn-long">LONG</div>
+            <div class="nav-btn" onclick="nextStyle()">STYLE</div>
             <div class="nav-btn" onclick="resetTimer()">RESET</div>
         </div>
         <div class="main">
             <div class="status" id="status">READY</div>
-            <div class="timer-display work" id="timer">25:00</div>
+            <div class="timer-area">
+                <!-- Digital -->
+                <div class="timer-view digital work active" id="view-digital">25:00</div>
+                <!-- Analog -->
+                <div class="timer-view analog" id="view-analog">
+                    <div id="analog-markers"></div>
+                    <div class="analog-hand minute" id="analog-min"></div>
+                    <div class="analog-hand second" id="analog-sec"></div>
+                    <div class="analog-center"></div>
+                </div>
+                <!-- Flip -->
+                <div class="timer-view flip-container" id="view-flip">
+                    <div class="flip-digit" id="flip-m1"><div class="flip-text">2</div></div>
+                    <div class="flip-digit" id="flip-m2"><div class="flip-text">5</div></div>
+                    <div class="flip-sep">:</div>
+                    <div class="flip-digit" id="flip-s1"><div class="flip-text">0</div></div>
+                    <div class="flip-digit" id="flip-s2"><div class="flip-text">0</div></div>
+                </div>
+                <!-- Ring -->
+                <div class="timer-view ring-container" id="view-ring">
+                    <svg class="ring-svg" viewBox="0 0 160 160">
+                        <circle class="ring-bg" cx="80" cy="80" r="76"/>
+                        <circle class="ring-progress" id="ring-progress" cx="80" cy="80" r="76"/>
+                    </svg>
+                    <div class="ring-text" id="ring-text">25:00</div>
+                </div>
+                <!-- Bars -->
+                <div class="timer-view bars" id="view-bars"></div>
+            </div>
             <div class="controls">
                 <div class="btn primary" onclick="toggleTimer()" id="btn-main">START</div>
                 <div class="btn" onclick="skipSession()">SKIP</div>
             </div>
-            <div class="sessions" id="sessions">Sessions: <span id="dots"></span></div>
+            <div class="sessions">Sessions: <span id="dots"></span></div>
         </div>
         <div class="bottom">
             <div class="setting"><label>WORK</label><input type="number" id="work-time" value="25" min="1" max="60" onchange="updateTimes()"></div>
@@ -68,47 +140,103 @@
     <script>
         let timeLeft = 25 * 60, totalTime = 25 * 60, isRunning = false, currentMode = 'work', sessionCount = 0, timerInterval = null;
         let workMinutes = 25, shortMinutes = 5, longMinutes = 15, sessionsBeforeLong = 4;
+        let currentStyle = 0;
+        const styles = ['digital', 'analog', 'flip', 'ring', 'bars'];
         
         const savedBrightness = localStorage.getItem('brightness');
         if (savedBrightness) document.body.style.filter = `brightness(${0.3 + (parseInt(savedBrightness) / 100) * 0.7})`;
         
+        // Create analog markers
+        const markersContainer = document.getElementById('analog-markers');
+        for (let i = 0; i < 12; i++) {
+            const marker = document.createElement('div');
+            marker.className = 'analog-marker';
+            marker.style.transform = `rotate(${i * 30}deg)`;
+            markersContainer.appendChild(marker);
+        }
+        
+        // Create bars
+        const barsContainer = document.getElementById('view-bars');
+        for (let i = 0; i < 20; i++) {
+            const bar = document.createElement('div');
+            bar.className = 'bar';
+            bar.style.height = '10%';
+            barsContainer.appendChild(bar);
+        }
+        
         function formatTime(s) { const m = Math.floor(s / 60); const sec = s % 60; return `${m.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`; }
-        function updateDisplay() { document.getElementById('timer').textContent = formatTime(timeLeft); document.title = `F.R.I.D.A.Y. - ${formatTime(timeLeft)}`; }
+        function formatDigit(n) { return n.toString().padStart(2, '0'); }
+        
+        function updateDisplay() {
+            const timeStr = formatTime(timeLeft);
+            const m = Math.floor(timeLeft / 60), s = timeLeft % 60;
+            
+            // Digital
+            document.getElementById('view-digital').textContent = timeStr;
+            // Analog
+            const minDeg = (m % 60) * 6 + (s / 60) * 6;
+            const secDeg = s * 6;
+            document.getElementById('analog-min').style.transform = `rotate(${minDeg}deg)`;
+            document.getElementById('analog-sec').style.transform = `rotate(${secDeg}deg)`;
+            // Flip
+            const timePad = formatDigit(m) + formatDigit(s);
+            document.getElementById('flip-m1').querySelector('.flip-text').textContent = timePad[0];
+            document.getElementById('flip-m2').querySelector('.flip-text').textContent = timePad[1];
+            document.getElementById('flip-s1').querySelector('.flip-text').textContent = timePad[2];
+            document.getElementById('flip-s2').querySelector('.flip-text').textContent = timePad[3];
+            // Ring
+            document.getElementById('ring-text').textContent = timeStr;
+            const offset = 502 - (502 * (1 - timeLeft / totalTime));
+            document.getElementById('ring-progress').style.strokeDashoffset = offset;
+            // Bars
+            const bars = document.querySelectorAll('.bar');
+            const activeBars = Math.ceil((timeLeft / totalTime) * 20);
+            bars.forEach((bar, i) => {
+                bar.classList.toggle('active', i < activeBars);
+                bar.style.height = `${10 + (i / 20) * 90}%`;
+            });
+            
+            document.title = `F.R.I.D.A.Y. - ${timeStr}`;
+        }
+        
         function updateDots() { let dots = ''; for (let i = 0; i < sessionsBeforeLong; i++) dots += `<span class="dot ${i < sessionCount ? 'done' : ''}"></span>`; document.getElementById('dots').innerHTML = dots; }
+        
+        function nextStyle() {
+            document.getElementById('view-' + styles[currentStyle]).classList.remove('active');
+            currentStyle = (currentStyle + 1) % styles.length;
+            document.getElementById('view-' + styles[currentStyle]).classList.add('active');
+            updateStyleColors();
+        }
+        
+        function updateStyleColors() {
+            const view = document.getElementById('view-' + styles[currentStyle]);
+            view.classList.remove('work', 'break', 'longbreak');
+            view.classList.add(currentMode === 'work' ? 'work' : currentMode === 'short' ? 'break' : 'longbreak');
+        }
         
         function setMode(mode) {
             if (isRunning && !confirm('Switch mode? Timer will reset.')) return;
             stopTimer(); currentMode = mode;
             ['work','short','long'].forEach(m => document.getElementById('btn-' + m).classList.remove('active'));
             document.getElementById('btn-' + mode).classList.add('active');
-            const timerEl = document.getElementById('timer'); timerEl.className = 'timer-display';
+            
             const statusEl = document.getElementById('status');
-            if (mode === 'work') { totalTime = workMinutes * 60; timerEl.classList.add('work'); statusEl.textContent = 'WORK SESSION'; }
-            else if (mode === 'short') { totalTime = shortMinutes * 60; timerEl.classList.add('break'); statusEl.textContent = 'SHORT BREAK'; }
-            else { totalTime = longMinutes * 60; timerEl.classList.add('longbreak'); statusEl.textContent = 'LONG BREAK'; }
-            timeLeft = totalTime; updateDisplay();
+            if (mode === 'work') { totalTime = workMinutes * 60; statusEl.textContent = 'WORK SESSION'; }
+            else if (mode === 'short') { totalTime = shortMinutes * 60; statusEl.textContent = 'SHORT BREAK'; }
+            else { totalTime = longMinutes * 60; statusEl.textContent = 'LONG BREAK'; }
+            
+            timeLeft = totalTime;
+            updateStyleColors();
+            updateDisplay();
         }
         
-        function toggleTimer() {
-            if (isRunning) stopTimer(); else startTimer();
-        }
-        
+        function toggleTimer() { if (isRunning) stopTimer(); else startTimer(); }
         function startTimer() {
             isRunning = true; document.getElementById('btn-main').textContent = 'PAUSE'; document.getElementById('status').classList.add('active');
-            timerInterval = setInterval(() => {
-                timeLeft--; updateDisplay();
-                if (timeLeft <= 0) completeSession();
-            }, 1000);
+            timerInterval = setInterval(() => { timeLeft--; updateDisplay(); if (timeLeft <= 0) completeSession(); }, 1000);
         }
-        
-        function stopTimer() {
-            isRunning = false; clearInterval(timerInterval); document.getElementById('btn-main').textContent = 'START'; document.getElementById('status').classList.remove('active');
-        }
-        
-        function resetTimer() {
-            stopTimer(); timeLeft = totalTime; updateDisplay();
-        }
-        
+        function stopTimer() { isRunning = false; clearInterval(timerInterval); document.getElementById('btn-main').textContent = 'START'; document.getElementById('status').classList.remove('active'); }
+        function resetTimer() { stopTimer(); timeLeft = totalTime; updateDisplay(); }
         function completeSession() {
             stopTimer(); showNotification('SESSION COMPLETE');
             if (currentMode === 'work') {
@@ -118,29 +246,9 @@
             } else setTimeout(() => setMode('work'), 2000);
             updateDots();
         }
-        
-        function skipSession() {
-            if (isRunning) stopTimer();
-            if (currentMode === 'work') {
-                sessionCount++;
-                if (sessionCount >= sessionsBeforeLong) { sessionCount = 0; setMode('long'); }
-                else setMode('short');
-            } else setMode('work');
-            updateDots();
-        }
-        
-        function showNotification(text) {
-            const n = document.getElementById('notification'); n.textContent = text; n.classList.add('show');
-            setTimeout(() => n.classList.remove('show'), 3000);
-        }
-        
-        function updateTimes() {
-            workMinutes = parseInt(document.getElementById('work-time').value) || 25;
-            shortMinutes = parseInt(document.getElementById('short-time').value) || 5;
-            longMinutes = parseInt(document.getElementById('long-time').value) || 15;
-            sessionsBeforeLong = parseInt(document.getElementById('sessions-before-long').value) || 4;
-            if (!isRunning) { setMode(currentMode); updateDots(); }
-        }
+        function skipSession() { if (isRunning) stopTimer(); if (currentMode === 'work') { sessionCount++; if (sessionCount >= sessionsBeforeLong) { sessionCount = 0; setMode('long'); } else setMode('short'); } else setMode('work'); updateDots(); }
+        function showNotification(text) { const n = document.getElementById('notification'); n.textContent = text; n.classList.add('show'); setTimeout(() => n.classList.remove('show'), 3000); }
+        function updateTimes() { workMinutes = parseInt(document.getElementById('work-time').value) || 25; shortMinutes = parseInt(document.getElementById('short-time').value) || 5; longMinutes = parseInt(document.getElementById('long-time').value) || 15; sessionsBeforeLong = parseInt(document.getElementById('sessions-before-long').value) || 4; if (!isRunning) { setMode(currentMode); updateDots(); } }
         
         updateDots();
     </script>
