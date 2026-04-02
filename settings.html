@@ -537,17 +537,14 @@
             }
         }
         
-        function showTab(tab) {
-            // Could filter settings by category
-            console.log('Show tab:', tab);
-        }
-        
         // Load saved settings on start
         const saved = localStorage.getItem('friday_settings');
         if (saved) {
             Object.assign(settings, JSON.parse(saved));
-            // Apply loaded settings to UI...
         }
+        
+        // Debug: log when tabs switch
+        console.log('Settings page loaded. Tabs: system, display, audio, power');
     </script>
 </body>
 </html>
