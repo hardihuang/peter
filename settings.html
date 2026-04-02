@@ -7,7 +7,7 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-user-select: none; }
         body { width: 800px; height: 480px; overflow: hidden; background: #000; color: #0f0; font-family: 'Courier New', monospace; font-size: 12px; }
-        .container { width: 800px; height: 480px; display: grid; grid-template-rows: 44px 1fr 44px; padding: 8px; gap: 6px; }
+        .container { width: 800px; height: 480px; display: grid; grid-template-rows: 44px 1fr; padding: 8px; gap: 6px; }
         
         /* Top Navigation - Touch optimized */
         .header { border: 1px solid #0f0; padding: 4px 8px; display: flex; gap: 6px; align-items: center; }
@@ -25,16 +25,22 @@
         .nav-btn.active { background: rgba(0,255,0,0.25); }
         .back-btn { margin-right: auto; min-width: 70px; }
         
-        /* Main Settings Panel */
+        /* Main Settings Panel - No scroll */
         .main { 
             border: 1px solid #0f0; 
             padding: 6px; 
-            overflow-y: auto;
-            overflow-x: hidden;
+            overflow: hidden;
         }
-        .settings-list { display: flex; flex-direction: column; gap: 3px; }
+        .tab-content { display: none; height: 100%; }
+        .tab-content.active { display: block; }
+        .settings-list { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 3px; 
+            height: 100%;
+        }
         
-        /* Setting Row - Touch optimized */
+        /* Setting Row - Touch optimized, flex to fill */
         .setting-row { 
             display: grid; 
             grid-template-columns: 36px 1fr 140px; 
@@ -42,7 +48,8 @@
             border: 1px solid #050; 
             padding: 8px 10px;
             cursor: pointer;
-            min-height: 44px;
+            min-height: 48px;
+            flex: 1;
             touch-action: manipulation;
         }
         .setting-row:hover, .setting-row:active { 
@@ -159,105 +166,170 @@
     <div class="container">
         <div class="header">
             <div class="nav-btn back-btn" onclick="goBack()">← BACK</div>
-            <div class="nav-btn active">SETTINGS</div>
-            <div class="nav-btn" onclick="showTab('system')">SYSTEM</div>
-            <div class="nav-btn" onclick="showTab('display')">DISPLAY</div>
-            <div class="nav-btn" onclick="showTab('audio')">AUDIO</div>
+            <div class="nav-btn active" onclick="showTab('system')" id="btn-system">SYSTEM</div>
+            <div class="nav-btn" onclick="showTab('display')" id="btn-display">DISPLAY</div>
+            <div class="nav-btn" onclick="showTab('audio')" id="btn-audio">AUDIO</div>
+            <div class="nav-btn" onclick="showTab('power')" id="btn-power">POWER</div>
         </div>
         
         <div class="main">
-            <div class="settings-list" id="settingsList">
-                <div class="section-divider">SYSTEM</div>
-                
-                <div class="setting-row" data-type="toggle" data-key="autostart" onclick="toggleSetting(this)">
-                    <div class="indicator checked" id="ind-autostart">✓</div>
-                    <div class="setting-label">Auto-start on boot</div>
-                    <div class="setting-value" id="val-autostart">ENABLED</div>
-                </div>
-                
-                <div class="setting-row" data-type="toggle" data-key="ssh" onclick="toggleSetting(this)">
-                    <div class="indicator checked" id="ind-ssh">✓</div>
-                    <div class="setting-label">SSH Server</div>
-                    <div class="setting-value" id="val-ssh">RUNNING</div>
-                </div>
-                
-                <div class="setting-row" data-type="toggle" data-key="ntp" onclick="toggleSetting(this)">
-                    <div class="indicator checked" id="ind-ntp">✓</div>
-                    <div class="setting-label">NTP Time Sync</div>
-                    <div class="setting-value" id="val-ntp">ENABLED</div>
-                </div>
-                
-                <div class="setting-row" data-type="action" onclick="editHostname()">
-                    <div class="indicator"></div>
-                    <div class="setting-label">Hostname</div>
-                    <div class="setting-value" id="hostname">orangepi3b</div>
-                </div>
-                
-                <div class="section-divider">DISPLAY</div>
-                
-                <div class="setting-row" data-type="slider" data-key="brightness" data-min="0" data-max="100" data-value="70">
-                    <div class="indicator"></div>
-                    <div class="setting-label">Brightness</div>
-                    <div class="slider-cell" onclick="startSlider(event, this)">
-                        <div class="slider-track" id="track-brightness">
-                            <div class="slider-fill" id="fill-brightness" style="width: 70%;"></div>
-                        </div>
-                        <span class="slider-text" id="text-brightness">70%</span>
+            <!-- SYSTEM TAB -->
+            <div class="tab-content active" id="tab-system">
+                <div class="settings-list">
+                    <div class="section-divider">SYSTEM SERVICES</div>
+                    <div class="setting-row" data-type="toggle" data-key="autostart" onclick="toggleSetting(this)">
+                        <div class="indicator checked" id="ind-autostart">✓</div>
+                        <div class="setting-label">Auto-start on boot</div>
+                        <div class="setting-value" id="val-autostart">ENABLED</div>
                     </div>
-                </div>
-                
-                <div class="setting-row" data-type="slider" data-key="timeout" data-min="0" data-max="60" data-value="5">
-                    <div class="indicator"></div>
-                    <div class="setting-label">Screen Timeout</div>
-                    <div class="slider-cell" onclick="startSlider(event, this)">
-                        <div class="slider-track" id="track-timeout">
-                            <div class="slider-fill" id="fill-timeout" style="width: 8%;"></div>
-                        </div>
-                        <span class="slider-text" id="text-timeout">5min</span>
+                    <div class="setting-row" data-type="toggle" data-key="ssh" onclick="toggleSetting(this)">
+                        <div class="indicator checked" id="ind-ssh">✓</div>
+                        <div class="setting-label">SSH Server</div>
+                        <div class="setting-value" id="val-ssh">RUNNING</div>
                     </div>
-                </div>
-                
-                <div class="section-divider">AUDIO</div>
-                
-                <div class="setting-row" data-type="slider" data-key="volume" data-min="0" data-max="100" data-value="50">
-                    <div class="indicator"></div>
-                    <div class="setting-label">Master Volume</div>
-                    <div class="slider-cell" onclick="startSlider(event, this)">
-                        <div class="slider-track" id="track-volume">
-                            <div class="slider-fill" id="fill-volume" style="width: 50%;"></div>
-                        </div>
-                        <span class="slider-text" id="text-volume">50%</span>
+                    <div class="setting-row" data-type="toggle" data-key="ntp" onclick="toggleSetting(this)">
+                        <div class="indicator checked" id="ind-ntp">✓</div>
+                        <div class="setting-label">NTP Time Sync</div>
+                        <div class="setting-value" id="val-ntp">ENABLED</div>
                     </div>
-                </div>
-                
-                <div class="setting-row" data-type="toggle" data-key="sounds" onclick="toggleSetting(this)">
-                    <div class="indicator checked" id="ind-sounds">✓</div>
-                    <div class="setting-label">System Sounds</div>
-                    <div class="setting-value" id="val-sounds">ON</div>
-                </div>
-                
-                <div class="section-divider">POWER</div>
-                
-                <div class="setting-row" data-type="action" onclick="confirmReboot()">
-                    <div class="indicator"></div>
-                    <div class="setting-label" style="color: #fa0;">↻ Reboot System</div>
-                    <div class="setting-value">→</div>
-                </div>
-                
-                <div class="setting-row" data-type="action" onclick="confirmShutdown()">
-                    <div class="indicator"></div>
-                    <div class="setting-label" style="color: #f55;">⏻ Shutdown</div>
-                    <div class="setting-value">→</div>
+                    <div class="section-divider">NETWORK</div>
+                    <div class="setting-row" data-type="action" onclick="editHostname()">
+                        <div class="indicator"></div>
+                        <div class="setting-label">Hostname</div>
+                        <div class="setting-value" id="hostname">orangepi3b</div>
+                    </div>
+                    <div class="setting-row" data-type="action" onclick="editWifi()">
+                        <div class="indicator"></div>
+                        <div class="setting-label">WiFi Network</div>
+                        <div class="setting-value" id="wifi">Connected</div>
+                    </div>
+                    <div class="setting-row" data-type="action" onclick="editIP()">
+                        <div class="indicator"></div>
+                        <div class="setting-label">IP Address</div>
+                        <div class="setting-value" id="ip">DHCP</div>
+                    </div>
                 </div>
             </div>
-        </div>
-        
-        <div class="bottom">
-            <div class="nav-btn" onclick="goBack()">← BACK</div>
-            <div class="nav-btn" onclick="saveSettings()">💾 SAVE</div>
-            <div class="nav-btn" onclick="resetDefaults()">↺ RESET</div>
-            <div class="nav-btn" onclick="testSound()">🔊 TEST</div>
-            <div class="nav-btn" onclick="window.location.href='index.html'">🏠 HOME</div>
+            
+            <!-- DISPLAY TAB -->
+            <div class="tab-content" id="tab-display">
+                <div class="settings-list">
+                    <div class="section-divider">SCREEN</div>
+                    <div class="setting-row" data-type="slider" data-key="brightness" data-min="0" data-max="100" data-value="70">
+                        <div class="indicator"></div>
+                        <div class="setting-label">Brightness</div>
+                        <div class="slider-cell" onclick="startSlider(event, this)">
+                            <div class="slider-track" id="track-brightness">
+                                <div class="slider-fill" id="fill-brightness" style="width: 70%;"></div>
+                            </div>
+                            <span class="slider-text" id="text-brightness">70%</span>
+                        </div>
+                    </div>
+                    <div class="setting-row" data-type="slider" data-key="timeout" data-min="0" data-max="60" data-value="5">
+                        <div class="indicator"></div>
+                        <div class="setting-label">Screen Timeout</div>
+                        <div class="slider-cell" onclick="startSlider(event, this)">
+                            <div class="slider-track" id="track-timeout">
+                                <div class="slider-fill" id="fill-timeout" style="width: 8%;"></div>
+                            </div>
+                            <span class="slider-text" id="text-timeout">5min</span>
+                        </div>
+                    </div>
+                    <div class="section-divider">RESOLUTION</div>
+                    <div class="setting-row" data-type="radio" data-group="res" onclick="selectRadio(this, 'res')">
+                        <div class="indicator radio checked" id="ind-res-0">●</div>
+                        <div class="setting-label">800x480 (Native)</div>
+                        <div class="setting-value">CURRENT</div>
+                    </div>
+                    <div class="setting-row" data-type="radio" data-group="res" onclick="selectRadio(this, 'res')">
+                        <div class="indicator radio" id="ind-res-1"></div>
+                        <div class="setting-label">640x480</div>
+                        <div class="setting-value"></div>
+                    </div>
+                    <div class="setting-row" data-type="radio" data-group="res" onclick="selectRadio(this, 'res')">
+                        <div class="indicator radio" id="ind-res-2"></div>
+                        <div class="setting-label">1024x600</div>
+                        <div class="setting-value"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- AUDIO TAB -->
+            <div class="tab-content" id="tab-audio">
+                <div class="settings-list">
+                    <div class="section-divider">VOLUME</div>
+                    <div class="setting-row" data-type="slider" data-key="volume" data-min="0" data-max="100" data-value="50">
+                        <div class="indicator"></div>
+                        <div class="setting-label">Master Volume</div>
+                        <div class="slider-cell" onclick="startSlider(event, this)">
+                            <div class="slider-track" id="track-volume">
+                                <div class="slider-fill" id="fill-volume" style="width: 50%;"></div>
+                            </div>
+                            <span class="slider-text" id="text-volume">50%</span>
+                        </div>
+                    </div>
+                    <div class="section-divider">OUTPUT</div>
+                    <div class="setting-row" data-type="radio" data-group="output" onclick="selectRadio(this, 'output')">
+                        <div class="indicator radio checked" id="ind-output-0">●</div>
+                        <div class="setting-label">HDMI Audio</div>
+                        <div class="setting-value">ACTIVE</div>
+                    </div>
+                    <div class="setting-row" data-type="radio" data-group="output" onclick="selectRadio(this, 'output')">
+                        <div class="indicator radio" id="ind-output-1"></div>
+                        <div class="setting-label">3.5mm Jack</div>
+                        <div class="setting-value"></div>
+                    </div>
+                    <div class="setting-row" data-type="radio" data-group="output" onclick="selectRadio(this, 'output')">
+                        <div class="indicator radio" id="ind-output-2"></div>
+                        <div class="setting-label">Bluetooth</div>
+                        <div class="setting-value"></div>
+                    </div>
+                    <div class="section-divider">OPTIONS</div>
+                    <div class="setting-row" data-type="toggle" data-key="sounds" onclick="toggleSetting(this)">
+                        <div class="indicator checked" id="ind-sounds">✓</div>
+                        <div class="setting-label">System Sounds</div>
+                        <div class="setting-value" id="val-sounds">ON</div>
+                    </div>
+                    <div class="setting-row" data-type="action" onclick="testSound()">
+                        <div class="indicator"></div>
+                        <div class="setting-label">Test Sound</div>
+                        <div class="setting-value">→</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- POWER TAB -->
+            <div class="tab-content" id="tab-power">
+                <div class="settings-list">
+                    <div class="section-divider">POWER OPTIONS</div>
+                    <div class="setting-row" data-type="action" onclick="saveSettings()">
+                        <div class="indicator"></div>
+                        <div class="setting-label" style="color: #0f0;">💾 Save Settings</div>
+                        <div class="setting-value">→</div>
+                    </div>
+                    <div class="setting-row" data-type="action" onclick="resetDefaults()">
+                        <div class="indicator"></div>
+                        <div class="setting-label">↺ Reset to Defaults</div>
+                        <div class="setting-value">→</div>
+                    </div>
+                    <div class="section-divider">SYSTEM CONTROL</div>
+                    <div class="setting-row" data-type="action" onclick="confirmReboot()">
+                        <div class="indicator"></div>
+                        <div class="setting-label" style="color: #fa0;">↻ Reboot System</div>
+                        <div class="setting-value">→</div>
+                    </div>
+                    <div class="setting-row" data-type="action" onclick="confirmShutdown()">
+                        <div class="indicator"></div>
+                        <div class="setting-label" style="color: #f55;">⏻ Shutdown</div>
+                        <div class="setting-value">→</div>
+                    </div>
+                    <div class="setting-row" data-type="action" onclick="window.location.href='index.html'">
+                        <div class="indicator"></div>
+                        <div class="setting-label">🏠 Back to Home</div>
+                        <div class="setting-value">→</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     
@@ -284,6 +356,42 @@
         
         function goBack() {
             window.location.href = 'index.html';
+        }
+        
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // Show selected tab
+            document.getElementById('tab-' + tabName).classList.add('active');
+            
+            // Update nav buttons
+            document.querySelectorAll('.header .nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById('btn-' + tabName).classList.add('active');
+        }
+        
+        function selectRadio(row, group) {
+            // Uncheck all in group
+            document.querySelectorAll('[data-group="' + group + '"]').forEach(r => {
+                r.querySelector('.indicator').classList.remove('checked');
+                r.querySelector('.indicator').textContent = '';
+            });
+            // Check selected
+            row.querySelector('.indicator').classList.add('checked');
+            row.querySelector('.indicator').textContent = '●';
+        }
+        
+        function editWifi() {
+            const ssid = prompt('WiFi SSID:', 'HomeNetwork');
+            if (ssid) document.getElementById('wifi').textContent = ssid;
+        }
+        
+        function editIP() {
+            const ip = prompt('IP Address (or DHCP):', '192.168.1.100');
+            if (ip) document.getElementById('ip').textContent = ip;
         }
         
         function toggleSetting(row) {
