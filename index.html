@@ -163,6 +163,13 @@
             document.getElementById('uptime').textContent = days + 'd ' + Math.floor(Math.random() * 24) + 'h';
         }
         
+        // Load brightness setting from localStorage
+        const savedBrightness = localStorage.getItem('brightness');
+        if (savedBrightness !== null) {
+            const brightnessVal = 0.3 + (parseInt(savedBrightness) / 100) * 0.7;
+            document.body.style.filter = `brightness(${brightnessVal})`;
+        }
+        
         typeFriday();
         updateTime();
         updateStats();

@@ -460,27 +460,86 @@
         }
         
         function applySetting(key, value) {
-            // These would connect to actual system calls on Orange Pi
             console.log('Setting', key, 'to', value);
             
-            // Simulate system commands
             switch(key) {
                 case 'brightness':
-                    // echo value > /sys/class/backlight/.../brightness
-                    document.body.style.opacity = 0.3 + (value / 100) * 0.7;
+                    // Apply brightness filter to entire page
+                    const brightnessVal = 0.3 + (value / 100) * 0.7;
+                    document.body.style.filter = `brightness(${brightnessVal})`;
+                    localStorage.setItem('brightness', value);
                     break;
                 case 'volume':
-                    // amixer set Master value%
+                    localStorage.setItem('volume', value);
+                    break;
+                case 'timeout':
+                    localStorage.setItem('timeout', value);
                     break;
                 case 'sounds':
-                    // Enable/disable system sounds
+                    localStorage.setItem('sounds', value);
+                    break;
+                case 'autostart':
+                    localStorage.setItem('autostart', value);
                     break;
                 case 'ssh':
-                    // systemctl start/stop ssh
+                    localStorage.setItem('ssh', value);
                     break;
                 case 'ntp':
-                    // systemctl start/stop systemd-timesyncd
+                    localStorage.setItem('ntp', value);
                     break;
+            }
+        }
+        
+        // Load and apply saved settings on page load
+        function loadSettings() {
+            // Brightness
+            const savedBrightness = localStorage.getItem('brightness');
+            if (savedBrightness !== null) {
+                settings.brightness = parseInt(savedBrightness);
+                document.getElementById('fill-brightness').style.width = settings.brightness + '%';
+                document.getElementById('text-brightness').textContent = settings.brightness + '%';
+                document.body.style.filter = `brightness(${0.3 + (settings.brightness / 100) * 0.7})`;
+            }
+            
+            // Volume
+            const savedVolume = localStorage.getItem('volume');
+            if (savedVolume !== null) {
+                settings.volume = parseInt(savedVolume);
+                document.getElementById('fill-volume').style.width = settings.volume + '%';
+                document.getElementById('text-volume').textContent = settings.volume + '%';
+            }
+            
+            // Timeout
+            const savedTimeout = localStorage.getItem('timeout');
+            if (savedTimeout !== null) {
+                settings.timeout = parseInt(savedTimeout);
+                document.getElementById('fill-timeout').style.width = (settings.timeout / 60 * 100) + '%';
+                document.getElementById('text-timeout').textContent = settings.timeout + 'min';
+            }
+            
+            // Toggles
+            ['autostart', 'ssh', 'ntp', 'sounds'].forEach(key => {
+                const saved = localStorage.getItem(key);
+                if (saved !== null) {
+                    settings[key] = saved === 'true';
+                    updateToggleUI(key, settings[key]);
+                }
+            });
+        }
+        
+        function updateToggleUI(key, value) {
+            const ind = document.getElementById('ind-' + key);
+            const val = document.getElementById('val-' + key);
+            if (!ind || !val) return;
+            
+            if (value) {
+                ind.classList.add('checked');
+                ind.textContent = '✓';
+                val.textContent = key === 'sounds' ? 'ON' : (key === 'ssh' ? 'RUNNING' : 'ENABLED');
+            } else {
+                ind.classList.remove('checked');
+                ind.textContent = '';
+                val.textContent = key === 'sounds' ? 'OFF' : (key === 'ssh' ? 'STOPPED' : 'DISABLED');
             }
         }
         
@@ -542,6 +601,9 @@
         if (saved) {
             Object.assign(settings, JSON.parse(saved));
         }
+        
+        // Load individual settings and apply them
+        loadSettings();
         
         // Debug: log when tabs switch
         console.log('Settings page loaded. Tabs: system, display, audio, power');
