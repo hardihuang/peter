@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F.R.I.D.A.Y. - Calculator</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+        body { width: 800px; height: 480px; overflow: hidden; background: #000; color: #0f0; font-family: 'Courier New', monospace; }
+        .container { width: 800px; height: 480px; display: grid; grid-template-rows: 44px 1fr; padding: 8px; gap: 6px; }
+        .header { border: 1px solid #0f0; padding: 4px 8px; display: flex; gap: 6px; align-items: center; }
+        .nav-btn { border: 1px solid #0f0; padding: 6px 12px; cursor: pointer; font-size: 11px; min-height: 32px; display: flex; align-items: center; justify-content: center; }
+        .nav-btn:hover { background: rgba(0,255,0,0.15); }
+        .nav-btn.active { background: rgba(0,255,0,0.25); }
+        .back-btn { margin-right: auto; min-width: 70px; }
+        .main { border: 1px solid #0f0; padding: 10px; display: flex; flex-direction: column; gap: 10px; }
+        
+        /* Display */
+        .display { border: 1px solid #0f0; padding: 15px; text-align: right; min-height: 80px; }
+        .display-history { font-size: 14px; color: #080; margin-bottom: 5px; }
+        .display-main { font-size: 42px; font-weight: bold; letter-spacing: 2px; }
+        .display-sub { font-size: 12px; color: #0a0; margin-top: 5px; }
+        
+        /* Mode Tabs */
+        .modes { display: flex; gap: 6px; }
+        .mode-btn { flex: 1; border: 1px solid #050; padding: 8px; text-align: center; cursor: pointer; font-size: 11px; }
+        .mode-btn:hover { border-color: #0a0; }
+        .mode-btn.active { border-color: #0f0; background: rgba(0,255,0,0.1); }
+        
+        /* Keypad */
+        .keypad { flex: 1; display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+        .key { border: 1px solid #050; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; min-height: 50px; }
+        .key:hover { border-color: #0a0; background: rgba(0,255,0,0.05); }
+        .key:active { border-color: #0f0; background: rgba(0,255,0,0.15); }
+        .key.num { font-size: 22px; }
+        .key.op { border-color: #0a0; }
+        .key.op:hover { border-color: #0f0; }
+        .key.eq { border-color: #0f0; background: rgba(0,255,0,0.1); font-weight: bold; }
+        .key.fn { font-size: 14px; color: #0a0; }
+        .key.fn:hover { color: #0f0; }
+        .key.clear { border-color: #fa0; color: #fa0; }
+        .key.clear:hover { background: rgba(255,170,0,0.1); }
+        .key.del { border-color: #f55; color: #f55; }
+        .key.del:hover { background: rgba(255,85,85,0.1); }
+        
+        .scanline { position: fixed; top: 0; left: 0; width: 100%; height: 2px; background: rgba(0,255,0,0.25); animation: scan 3s linear infinite; pointer-events: none; }
+        @keyframes scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(480px); } }
+    </style>
+</head>
+<body>
+    <div class="scanline"></div>
+    <div class="container">
+        <div class="header">
+            <div class="nav-btn back-btn" onclick="location.href='index.html'">← BACK</div>
+            <div class="nav-btn active" onclick="setMode('basic')" id="btn-basic">BASIC</div>
+            <div class="nav-btn" onclick="setMode('scientific')" id="btn-scientific">SCI</div>
+            <div class="nav-btn" onclick="setMode('programmer')" id="btn-programmer">PROG</div>
+            <div class="nav-btn" onclick="clearAll()">CLR</div>
+        </div>
+        <div class="main">
+            <div class="display">
+                <div class="display-history" id="history"></div>
+                <div class="display-main" id="main">0</div>
+                <div class="display-sub" id="sub"></div>
+            </div>
+            <div class="keypad" id="keypad">
+                <!-- Row 1 -->
+                <div class="key fn" onclick="fn('sin')">sin</div>
+                <div class="key fn" onclick="fn('cos')">cos</div>
+                <div class="key fn" onclick="fn('tan')">tan</div>
+                <div class="key fn" onclick="fn('log')">log</div>
+                <div class="key fn" onclick="fn('ln')">ln</div>
+                <!-- Row 2 -->
+                <div class="key fn" onclick="fn('sqrt')">√</div>
+                <div class="key fn" onclick="fn('pow')">x^y</div>
+                <div class="key fn" onclick="fn('pi')">π</div>
+                <div class="key fn" onclick="fn('e')">e</div>
+                <div class="key fn" onclick="fn('fact')">n!</div>
+                <!-- Row 3 -->
+                <div class="key fn" onclick="fn('inv')">1/x</div>
+                <div class="key fn" onclick="fn('abs')">|x|</div>
+                <div class="key fn" onclick="fn('deg')">DEG</div>
+                <div class="key fn" onclick="fn('rad')">RAD</div>
+                <div class="key clear" onclick="clearAll()">AC</div>
+                <!-- Row 4 -->
+                <div class="key fn" onclick="fn('(')">(</div>
+                <div class="key fn" onclick="fn(')')">)</div>
+                <div class="key num" onclick="num(7)">7</div>
+                <div class="key num" onclick="num(8)">8</div>
+                <div class="key num" onclick="num(9)">9</div>
+                <!-- Row 5 -->
+                <div class="key fn" onclick="fn('hex')">HEX</div>
+                <div class="key fn" onclick="fn('bin')">BIN</div>
+                <div class="key num" onclick="num(4)">4</div>
+                <div class="key num" onclick="num(5)">5</div>
+                <div class="key num" onclick="num(6)">6</div>
+                <!-- Row 6 -->
+                <div class="key op" onclick="op('/')">÷</div>
+                <div class="key op" onclick="op('*')">×</div>
+                <div class="key num" onclick="num(1)">1</div>
+                <div class="key num" onclick="num(2)">2</div>
+                <div class="key num" onclick="num(3)">3</div>
+                <!-- Row 7 -->
+                <div class="key op" onclick="op('-')">−</div>
+                <div class="key op" onclick="op('+')">+</div>
+                <div class="key num" onclick="num(0)">0</div>
+                <div class="key num" onclick="num('.')">.</div>
+                <div class="key del" onclick="del()">⌫</div>
+                <!-- Row 8 -->
+                <div class="key eq" onclick="calc()" style="grid-column: span 5;">=</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        let current = '0', history = '', mode = 'basic', lastOp = null, memory = 0;
+        let isRadians = false;
+        
+        const savedBrightness = localStorage.getItem('brightness');
+        if (savedBrightness) document.body.style.filter = `brightness(${0.3 + (parseInt(savedBrightness) / 100) * 0.7})`;
+        
+        function updateDisplay() {
+            document.getElementById('main').textContent = current;
+            document.getElementById('history').textContent = history;
+        }
+        
+        function setMode(m) {
+            mode = m;
+            ['basic', 'scientific', 'programmer'].forEach(x => document.getElementById('btn-' + x).classList.remove('active'));
+            document.getElementById('btn-' + m).classList.add('active');
+            document.getElementById('sub').textContent = mode.toUpperCase() + ' MODE';
+        }
+        
+        function num(n) {
+            if (current === '0' && n !== '.') current = '';
+            if (n === '.' && current.includes('.')) return;
+            current += n;
+            updateDisplay();
+        }
+        
+        function op(o) {
+            if (lastOp) calc();
+            history = current + ' ' + o + ' ';
+            lastOp = o;
+            current = '0';
+            updateDisplay();
+        }
+        
+        function fn(f) {
+            const val = parseFloat(current) || 0;
+            let result = val;
+            switch(f) {
+                case 'sin': result = Math.sin(isRadians ? val : val * Math.PI / 180); break;
+                case 'cos': result = Math.cos(isRadians ? val : val * Math.PI / 180); break;
+                case 'tan': result = Math.tan(isRadians ? val : val * Math.PI / 180); break;
+                case 'log': result = Math.log10(val); break;
+                case 'ln': result = Math.log(val); break;
+                case 'sqrt': result = Math.sqrt(val); break;
+                case 'pow': history = current + '^'; lastOp = '^'; current = '0'; updateDisplay(); return;
+                case 'pi': result = Math.PI; break;
+                case 'e': result = Math.E; break;
+                case 'fact': result = factorial(Math.floor(val)); break;
+                case 'inv': result = 1 / val; break;
+                case 'abs': result = Math.abs(val); break;
+                case 'deg': isRadians = false; document.getElementById('sub').textContent = 'DEG MODE'; return;
+                case 'rad': isRadians = true; document.getElementById('sub').textContent = 'RAD MODE'; return;
+                case 'hex': current = Math.floor(val).toString(16).toUpperCase(); updateDisplay(); return;
+                case 'bin': current = Math.floor(val).toString(2); updateDisplay(); return;
+                case '(': current += '('; updateDisplay(); return;
+                case ')': current += ')'; updateDisplay(); return;
+            }
+            current = formatResult(result);
+            updateDisplay();
+        }
+        
+        function factorial(n) { return n <= 1 ? 1 : n * factorial(n - 1); }
+        
+        function calc() {
+            if (!lastOp) return;
+            try {
+                let expr = history + current;
+                expr = expr.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-').replace(/\^/g, '**');
+                let result = eval(expr);
+                history = '';
+                lastOp = null;
+                current = formatResult(result);
+                updateDisplay();
+            } catch(e) {
+                current = 'Error';
+                updateDisplay();
+            }
+        }
+        
+        function formatResult(n) {
+            if (!isFinite(n)) return 'Error';
+            let s = n.toString();
+            if (s.length > 12) s = n.toExponential(6);
+            return s;
+        }
+        
+        function del() {
+            if (current.length > 1) current = current.slice(0, -1);
+            else current = '0';
+            updateDisplay();
+        }
+        
+        function clearAll() {
+            current = '0';
+            history = '';
+            lastOp = null;
+            updateDisplay();
+        }
+        
+        updateDisplay();
+    </script>
+</body>
+</html>
