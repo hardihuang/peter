@@ -15,27 +15,22 @@
         .back-btn { margin-right: auto; min-width: 70px; }
         .main { border: 1px solid #0f0; padding: 6px; display: flex; flex-direction: column; gap: 6px; }
         
-        /* Display */
         .display { border: 1px solid #0f0; padding: 10px; text-align: right; height: 70px; }
-        .display-history { font-size: 12px; color: #080; margin-bottom: 2px; }
+        .display-history { font-size: 12px; color: #080; margin-bottom: 2px; min-height: 16px; }
         .display-main { font-size: 36px; font-weight: bold; letter-spacing: 2px; }
         .display-sub { font-size: 10px; color: #0a0; margin-top: 2px; }
         
-        /* Keypad */
-        .keypad { flex: 1; display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
-        .key { border: 1px solid #050; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; height: 48px; }
+        .keypad { flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+        .key { border: 1px solid #050; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; }
         .key:hover { border-color: #0a0; background: rgba(0,255,0,0.05); }
         .key:active { border-color: #0f0; background: rgba(0,255,0,0.15); }
-        .key.num { font-size: 20px; }
+        .key.num { font-size: 24px; }
         .key.op { border-color: #0a0; }
-        .key.op:hover { border-color: #0f0; }
-        .key.eq { border-color: #0f0; background: rgba(0,255,0,0.1); font-weight: bold; height: 42px; }
-        .key.fn { font-size: 12px; color: #0a0; }
-        .key.fn:hover { color: #0f0; }
+        .key.eq { border-color: #0f0; background: rgba(0,255,0,0.1); font-weight: bold; }
+        .key.fn { font-size: 14px; color: #0a0; }
         .key.clear { border-color: #fa0; color: #fa0; }
-        .key.clear:hover { background: rgba(255,170,0,0.1); }
         .key.del { border-color: #f55; color: #f55; }
-        .key.del:hover { background: rgba(255,85,85,0.1); }
+        .key.wide { grid-column: span 2; }
         
         .scanline { position: fixed; top: 0; left: 0; width: 100%; height: 2px; background: rgba(0,255,0,0.25); animation: scan 3s linear infinite; pointer-events: none; }
         @keyframes scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(480px); } }
@@ -55,65 +50,88 @@
             <div class="display">
                 <div class="display-history" id="history"></div>
                 <div class="display-main" id="main">0</div>
-                <div class="display-sub" id="sub"></div>
+                <div class="display-sub" id="sub">BASIC MODE</div>
             </div>
-            <div class="keypad" id="keypad">
-                <!-- Row 1: Functions -->
-                <div class="key fn" onclick="fn('sin')">sin</div>
-                <div class="key fn" onclick="fn('cos')">cos</div>
-                <div class="key fn" onclick="fn('tan')">tan</div>
-                <div class="key fn" onclick="fn('sqrt')">√</div>
-                <div class="key fn" onclick="fn('pow')">x^y</div>
-                <!-- Row 2: More functions -->
-                <div class="key fn" onclick="fn('log')">log</div>
-                <div class="key fn" onclick="fn('ln')">ln</div>
-                <div class="key fn" onclick="fn('pi')">π</div>
-                <div class="key fn" onclick="fn('e')">e</div>
-                <div class="key fn" onclick="fn('fact')">n!</div>
-                <!-- Row 3: Numbers 7-9 -->
-                <div class="key fn" onclick="fn('(')">(</div>
-                <div class="key fn" onclick="fn(')')">)</div>
-                <div class="key num" onclick="num(7)">7</div>
-                <div class="key num" onclick="num(8)">8</div>
-                <div class="key num" onclick="num(9)">9</div>
-                <!-- Row 4: Numbers 4-6 -->
-                <div class="key op" onclick="op('/')">÷</div>
-                <div class="key op" onclick="op('*')">×</div>
-                <div class="key num" onclick="num(4)">4</div>
-                <div class="key num" onclick="num(5)">5</div>
-                <div class="key num" onclick="num(6)">6</div>
-                <!-- Row 5: Numbers 1-3 -->
-                <div class="key op" onclick="op('-')">−</div>
-                <div class="key op" onclick="op('+')">+</div>
-                <div class="key num" onclick="num(1)">1</div>
-                <div class="key num" onclick="num(2)">2</div>
-                <div class="key num" onclick="num(3)">3</div>
-                <!-- Row 6: 0, ., =, del, clear -->
-                <div class="key clear" onclick="clearAll()">AC</div>
-                <div class="key num" onclick="num(0)">0</div>
-                <div class="key num" onclick="num('.')">.</div>
-                <div class="key del" onclick="del()">⌫</div>
-                <div class="key eq" onclick="calc()">=</div>
-            </div>
+            <div class="keypad" id="keypad"></div>
         </div>
     </div>
     <script>
-        let current = '0', history = '', mode = 'basic', lastOp = null, memory = 0;
-        let isRadians = false;
+        let current = '0', history = '', mode = 'basic', lastOp = null;
         
         const savedBrightness = localStorage.getItem('brightness');
         if (savedBrightness) document.body.style.filter = `brightness(${0.3 + (parseInt(savedBrightness) / 100) * 0.7})`;
         
-        function updateDisplay() {
-            document.getElementById('main').textContent = current;
-            document.getElementById('history').textContent = history;
+        const layouts = {
+            basic: [
+                ['C', '⌫', '÷', '×'],
+                ['7', '8', '9', '−'],
+                ['4', '5', '6', '+'],
+                ['1', '2', '3', '='],
+                ['0', '.', '%', '=']
+            ],
+            scientific: [
+                ['sin', 'cos', 'tan', 'log'],
+                ['√', 'x^y', 'π', 'ln'],
+                ['7', '8', '9', '÷'],
+                ['4', '5', '6', '×'],
+                ['1', '2', '3', '−'],
+                ['0', '.', '=', '+']
+            ],
+            programmer: [
+                ['HEX', 'BIN', 'OCT', 'DEC'],
+                ['AND', 'OR', 'XOR', 'NOT'],
+                ['7', '8', '9', '÷'],
+                ['4', '5', '6', '×'],
+                ['1', '2', '3', '−'],
+                ['0', '.', '=', '+']
+            ]
+        };
+        
+        function renderKeypad() {
+            const keypad = document.getElementById('keypad');
+            keypad.innerHTML = '';
+            const layout = layouts[mode];
+            
+            layout.forEach((row, rowIdx) => {
+                row.forEach((key, colIdx) => {
+                    if (rowIdx === 4 && colIdx === 3 && mode === 'basic') return; // Skip duplicate =
+                    
+                    const div = document.createElement('div');
+                    div.className = 'key';
+                    div.textContent = key;
+                    
+                    if (key >= '0' && key <= '9') div.classList.add('num');
+                    else if (['+', '−', '×', '÷', '='].includes(key)) div.classList.add('op');
+                    else if (key === '=') div.classList.add('eq');
+                    else if (key === 'C') div.classList.add('clear');
+                    else if (key === '⌫') div.classList.add('del');
+                    else div.classList.add('fn');
+                    
+                    if (key === '0' && mode === 'basic') div.classList.add('wide');
+                    
+                    div.onclick = () => handleKey(key);
+                    keypad.appendChild(div);
+                });
+            });
+        }
+        
+        function handleKey(key) {
+            if (key >= '0' && key <= '9') num(key);
+            else if (key === '.') num('.');
+            else if (['+', '−', '×', '÷'].includes(key)) op(key);
+            else if (key === '=') calc();
+            else if (key === 'C' || key === 'AC') clearAll();
+            else if (key === '⌫') del();
+            else if (key === '%') fn('percent');
+            else fn(key.toLowerCase());
         }
         
         function setMode(m) {
             mode = m;
             ['basic', 'scientific', 'programmer'].forEach(x => document.getElementById('btn-' + x).classList.remove('active'));
             document.getElementById('btn-' + m).classList.add('active');
-            document.getElementById('sub').textContent = mode.toUpperCase() + ' MODE';
+            document.getElementById('sub').textContent = m.toUpperCase() + ' MODE';
+            renderKeypad();
         }
         
         function num(n) {
@@ -135,30 +153,24 @@
             const val = parseFloat(current) || 0;
             let result = val;
             switch(f) {
-                case 'sin': result = Math.sin(isRadians ? val : val * Math.PI / 180); break;
-                case 'cos': result = Math.cos(isRadians ? val : val * Math.PI / 180); break;
-                case 'tan': result = Math.tan(isRadians ? val : val * Math.PI / 180); break;
+                case 'sin': result = Math.sin(val); break;
+                case 'cos': result = Math.cos(val); break;
+                case 'tan': result = Math.tan(val); break;
                 case 'log': result = Math.log10(val); break;
                 case 'ln': result = Math.log(val); break;
                 case 'sqrt': result = Math.sqrt(val); break;
                 case 'pow': history = current + '^'; lastOp = '^'; current = '0'; updateDisplay(); return;
                 case 'pi': result = Math.PI; break;
                 case 'e': result = Math.E; break;
-                case 'fact': result = factorial(Math.floor(val)); break;
-                case 'inv': result = 1 / val; break;
-                case 'abs': result = Math.abs(val); break;
-                case 'deg': isRadians = false; document.getElementById('sub').textContent = 'DEG MODE'; return;
-                case 'rad': isRadians = true; document.getElementById('sub').textContent = 'RAD MODE'; return;
+                case 'percent': result = val / 100; break;
                 case 'hex': current = Math.floor(val).toString(16).toUpperCase(); updateDisplay(); return;
                 case 'bin': current = Math.floor(val).toString(2); updateDisplay(); return;
-                case '(': current += '('; updateDisplay(); return;
-                case ')': current += ')'; updateDisplay(); return;
+                case 'oct': current = Math.floor(val).toString(8); updateDisplay(); return;
+                case 'dec': current = val.toString(10); updateDisplay(); return;
             }
             current = formatResult(result);
             updateDisplay();
         }
-        
-        function factorial(n) { return n <= 1 ? 1 : n * factorial(n - 1); }
         
         function calc() {
             if (!lastOp) return;
@@ -196,7 +208,13 @@
             updateDisplay();
         }
         
-        updateDisplay();
+        function updateDisplay() {
+            document.getElementById('main').textContent = current;
+            document.getElementById('history').textContent = history;
+        }
+        
+        renderKeypad();
     </script>
 </body>
 </html>
+ENDOFFILE
