@@ -15,6 +15,7 @@
         .datetime span { border: 1px solid #0f0; padding: 3px 8px; font-size: 11px; }
         .main { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
         .panel { border: 1px solid #0f0; padding: 8px; }
+        .empty-panel { display: flex; align-items: center; justify-content: center; height: 120px; color: #050; font-size: 9px; }
         .panel-title { font-size: 10px; border-bottom: 1px solid #0f0; padding-bottom: 4px; margin-bottom: 8px; }
         .panel-title::before { content: '> '; }
         .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
@@ -103,9 +104,7 @@
             </div>
             <div class="panel">
                 <div class="panel-title">APPLICATIONS</div>
-                <div style="display: flex; align-items: center; justify-content: center; height: calc(100% - 20px); color: #050; font-size: 9px;">
-                    [ NO APPS INSTALLED ]
-                </div>
+                <div class="empty-panel">[ NO APPS INSTALLED ]</div>
             </div>
         </div>
         <div class="bottom">
