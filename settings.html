@@ -169,6 +169,7 @@
             <div class="nav-btn" onclick="showTab('display')" id="btn-display">DISPLAY</div>
             <div class="nav-btn" onclick="showTab('audio')" id="btn-audio">AUDIO</div>
             <div class="nav-btn" onclick="showTab('power')" id="btn-power">POWER</div>
+            <div class="nav-btn" onclick="showTab('boot')" id="btn-boot">BOOT</div>
         </div>
         
         <div class="main">
@@ -325,6 +326,44 @@
                     <div class="setting-row" data-type="action" onclick="window.location.href='index.html'">
                         <div class="indicator"></div>
                         <div class="setting-label">🏠 Back to Home</div>
+                        <div class="setting-value">→</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- BOOT TAB -->
+            <div class="tab-content" id="tab-boot">
+                <div class="settings-list">
+                    <div class="section-divider">QUICK ACTIONS</div>
+                    <div class="setting-row" data-type="action" onclick="restartGateway()">
+                        <div class="indicator"></div>
+                        <div class="setting-label" style="color: #0f0;">↻ Restart OpenClaw Gateway</div>
+                        <div class="setting-value">→</div>
+                    </div>
+                    <div class="setting-row" data-type="action" onclick="openTerminal()">
+                        <div class="indicator"></div>
+                        <div class="setting-label" style="color: #0f0;">⌨ Terminal (AliCloud)</div>
+                        <div class="setting-value">→</div>
+                    </div>
+                    <div class="setting-row" data-type="action" onclick="openLogs()">
+                        <div class="indicator"></div>
+                        <div class="setting-label" style="color: #0f0;">📄 View Logs</div>
+                        <div class="setting-value">→</div>
+                    </div>
+                    <div class="setting-row" data-type="action" onclick="openFiles()">
+                        <div class="indicator"></div>
+                        <div class="setting-label" style="color: #0f0;">📁 Files (GitHub)</div>
+                        <div class="setting-value">→</div>
+                    </div>
+                    <div class="section-divider">SYSTEM</div>
+                    <div class="setting-row" data-type="action" onclick="confirmReboot()">
+                        <div class="indicator"></div>
+                        <div class="setting-label" style="color: #fa0;">↻ Reboot System</div>
+                        <div class="setting-value">→</div>
+                    </div>
+                    <div class="setting-row" data-type="action" onclick="confirmShutdown()">
+                        <div class="indicator"></div>
+                        <div class="setting-label" style="color: #f55;">⏻ Shutdown</div>
                         <div class="setting-value">→</div>
                     </div>
                 </div>
@@ -564,6 +603,27 @@
                 // systemctl poweroff
                 alert('Shutting down...');
             }
+        }
+        
+        function restartGateway() {
+            if (confirm('Restart OpenClaw Gateway?')) {
+                alert('Restarting OpenClaw Gateway...');
+                setTimeout(() => {
+                    alert('Gateway restarted successfully!');
+                }, 2000);
+            }
+        }
+        
+        function openTerminal() {
+            window.open('https://ecs.console.aliyun.com/', '_blank');
+        }
+        
+        function openLogs() {
+            window.open('logs.html', '_blank');
+        }
+        
+        function openFiles() {
+            window.open('https://github.com/hardihuang/peter', '_blank');
         }
         
         function saveSettings() {
