@@ -5,50 +5,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>F.R.I.D.A.Y. - Settings</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { width: 800px; height: 480px; overflow: hidden; background: #000; color: #0f0; font-family: 'Courier New', monospace; font-size: 11px; }
-        .container { width: 800px; height: 480px; display: grid; grid-template-rows: 40px 1fr 40px; padding: 10px; gap: 8px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-user-select: none; }
+        body { width: 800px; height: 480px; overflow: hidden; background: #000; color: #0f0; font-family: 'Courier New', monospace; font-size: 12px; }
+        .container { width: 800px; height: 480px; display: grid; grid-template-rows: 44px 1fr 44px; padding: 8px; gap: 6px; }
         
-        /* Top Navigation */
-        .header { border: 1px solid #0f0; padding: 6px 10px; display: flex; gap: 8px; align-items: center; }
-        .nav-btn { border: 1px solid #0f0; padding: 4px 10px; cursor: pointer; font-size: 10px; }
-        .nav-btn:hover { background: rgba(0,255,0,0.1); }
-        .nav-btn.active { background: rgba(0,255,0,0.2); }
-        .back-btn { margin-right: auto; }
+        /* Top Navigation - Touch optimized */
+        .header { border: 1px solid #0f0; padding: 4px 8px; display: flex; gap: 6px; align-items: center; }
+        .nav-btn { 
+            border: 1px solid #0f0; 
+            padding: 6px 12px; 
+            cursor: pointer; 
+            font-size: 11px;
+            min-height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-btn:hover, .nav-btn:active { background: rgba(0,255,0,0.15); }
+        .nav-btn.active { background: rgba(0,255,0,0.25); }
+        .back-btn { margin-right: auto; min-width: 70px; }
         
         /* Main Settings Panel */
-        .main { border: 1px solid #0f0; padding: 8px; overflow-y: auto; }
-        .settings-list { display: flex; flex-direction: column; gap: 4px; }
+        .main { 
+            border: 1px solid #0f0; 
+            padding: 6px; 
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .settings-list { display: flex; flex-direction: column; gap: 3px; }
+        
+        /* Setting Row - Touch optimized */
         .setting-row { 
             display: grid; 
-            grid-template-columns: 30px 1fr 150px; 
+            grid-template-columns: 36px 1fr 140px; 
             align-items: center; 
             border: 1px solid #050; 
-            padding: 6px 8px;
+            padding: 8px 10px;
             cursor: pointer;
-            min-height: 32px;
+            min-height: 44px;
+            touch-action: manipulation;
         }
-        .setting-row:hover { border-color: #0f0; background: rgba(0,255,0,0.05); }
-        .setting-row.selected { border-color: #0f0; background: rgba(0,255,0,0.1); }
+        .setting-row:hover, .setting-row:active { 
+            border-color: #0f0; 
+            background: rgba(0,255,0,0.08); 
+        }
+        .setting-row.active { 
+            border-color: #0f0; 
+            background: rgba(0,255,0,0.15); 
+        }
         
-        /* Checkbox/Radio indicator */
+        /* Checkbox/Radio indicator - Touch sized */
         .indicator { 
-            width: 14px; 
-            height: 14px; 
+            width: 20px; 
+            height: 20px; 
             border: 1px solid #0f0; 
             display: flex; 
             align-items: center; 
             justify-content: center;
-            font-size: 10px;
+            font-size: 14px;
+            font-weight: bold;
         }
-        .indicator.checked::after { content: '*'; }
+        .indicator.checked::after { content: '✓'; }
         .indicator.radio { border-radius: 50%; }
+        .indicator.radio.checked::after { content: '●'; font-size: 10px; }
         
         /* Label and value */
-        .setting-label { font-size: 10px; padding-left: 4px; }
+        .setting-label { font-size: 11px; padding-left: 6px; }
         .setting-value { 
             text-align: right; 
-            font-size: 9px; 
+            font-size: 10px; 
             color: #0a0;
         }
         
@@ -56,172 +81,367 @@
         .slider-cell { 
             display: flex; 
             align-items: center; 
-            gap: 6px;
+            gap: 8px;
         }
         .slider-track { 
             flex: 1; 
-            height: 10px; 
+            height: 14px; 
             border: 1px solid #050; 
             position: relative;
             cursor: pointer;
+            touch-action: manipulation;
         }
+        .slider-track:hover { border-color: #0a0; }
         .slider-fill { 
             height: 100%; 
             background: #0f0; 
             width: 50%;
+            pointer-events: none;
         }
-        .slider-text { font-size: 9px; min-width: 35px; text-align: right; }
+        .slider-text { font-size: 10px; min-width: 40px; text-align: right; color: #0f0; }
         
         /* Section divider */
         .section-divider { 
             border-bottom: 1px solid #050; 
-            margin: 8px 0 4px 0;
-            padding-bottom: 2px;
-            font-size: 8px; 
-            color: #0a0;
+            margin: 6px 0 4px 0;
+            padding: 4px 0 2px 4px;
+            font-size: 9px; 
+            color: #080;
+            letter-spacing: 1px;
         }
         
-        /* Bottom buttons */
-        .bottom { display: flex; gap: 8px; }
+        /* Bottom - Single row of nav buttons */
+        .bottom { 
+            display: flex; 
+            gap: 6px;
+            border: 1px solid #0f0;
+            padding: 4px 8px;
+        }
         .btn { 
             flex: 1; 
             border: 1px solid #0f0; 
-            padding: 8px; 
+            padding: 8px 4px; 
             text-align: center; 
             cursor: pointer; 
             font-size: 10px;
             text-transform: uppercase;
+            min-height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .btn:hover { background: rgba(0,255,0,0.1); }
-        .btn.primary { background: rgba(0,255,0,0.15); }
+        .btn:hover, .btn:active { background: rgba(0,255,0,0.15); }
         
         /* Scanline effect */
-        .scanline { position: fixed; top: 0; left: 0; width: 100%; height: 2px; background: rgba(0,255,0,0.3); animation: scan 3s linear infinite; pointer-events: none; }
-        @keyframes scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(480px); } }
+        .scanline { 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; 
+            height: 2px; 
+            background: rgba(0,255,0,0.25); 
+            animation: scan 3s linear infinite; 
+            pointer-events: none; 
+        }
+        @keyframes scan { 
+            0% { transform: translateY(-100%); } 
+            100% { transform: translateY(480px); } 
+        }
+        
+        /* Touch feedback */
+        .touch-active { 
+            background: rgba(0,255,0,0.2) !important; 
+            border-color: #0f0 !important;
+        }
     </style>
 </head>
 <body>
     <div class="scanline"></div>
     <div class="container">
         <div class="header">
-            <div class="nav-btn back-btn" onclick="window.location.href='index.html'">← BACK</div>
+            <div class="nav-btn back-btn" onclick="goBack()">← BACK</div>
             <div class="nav-btn active">SETTINGS</div>
-            <div class="nav-btn" onclick="alert('Terminal')">TERMINAL</div>
-            <div class="nav-btn" onclick="alert('Restart')">RESTART</div>
-            <div class="nav-btn" onclick="alert('Logs')">LOGS</div>
-            <div class="nav-btn" onclick="alert('Files')">FILES</div>
+            <div class="nav-btn" onclick="showTab('system')">SYSTEM</div>
+            <div class="nav-btn" onclick="showTab('display')">DISPLAY</div>
+            <div class="nav-btn" onclick="showTab('audio')">AUDIO</div>
         </div>
         
         <div class="main">
-            <div class="settings-list">
+            <div class="settings-list" id="settingsList">
                 <div class="section-divider">SYSTEM</div>
                 
-                <div class="setting-row selected" onclick="selectRow(this)">
-                    <div class="indicator checked">*</div>
+                <div class="setting-row" data-type="toggle" data-key="autostart" onclick="toggleSetting(this)">
+                    <div class="indicator checked" id="ind-autostart">✓</div>
                     <div class="setting-label">Auto-start on boot</div>
-                    <div class="setting-value">ENABLED</div>
+                    <div class="setting-value" id="val-autostart">ENABLED</div>
                 </div>
                 
-                <div class="setting-row" onclick="selectRow(this)">
-                    <div class="indicator"></div>
+                <div class="setting-row" data-type="toggle" data-key="ssh" onclick="toggleSetting(this)">
+                    <div class="indicator checked" id="ind-ssh">✓</div>
                     <div class="setting-label">SSH Server</div>
-                    <div class="setting-value">RUNNING</div>
+                    <div class="setting-value" id="val-ssh">RUNNING</div>
                 </div>
                 
-                <div class="setting-row" onclick="selectRow(this)">
-                    <div class="indicator checked">*</div>
+                <div class="setting-row" data-type="toggle" data-key="ntp" onclick="toggleSetting(this)">
+                    <div class="indicator checked" id="ind-ntp">✓</div>
                     <div class="setting-label">NTP Time Sync</div>
-                    <div class="setting-value">ENABLED</div>
+                    <div class="setting-value" id="val-ntp">ENABLED</div>
+                </div>
+                
+                <div class="setting-row" data-type="action" onclick="editHostname()">
+                    <div class="indicator"></div>
+                    <div class="setting-label">Hostname</div>
+                    <div class="setting-value" id="hostname">orangepi3b</div>
                 </div>
                 
                 <div class="section-divider">DISPLAY</div>
                 
-                <div class="setting-row" onclick="selectRow(this)">
+                <div class="setting-row" data-type="slider" data-key="brightness" data-min="0" data-max="100" data-value="70">
                     <div class="indicator"></div>
-                    <div class="setting-label">Screen Brightness</div>
-                    <div class="slider-cell">
-                        <div class="slider-track" onclick="adjustSlider(this, event)">
-                            <div class="slider-fill" style="width: 70%;"></div>
+                    <div class="setting-label">Brightness</div>
+                    <div class="slider-cell" onclick="startSlider(event, this)">
+                        <div class="slider-track" id="track-brightness">
+                            <div class="slider-fill" id="fill-brightness" style="width: 70%;"></div>
                         </div>
-                        <span class="slider-text">70%</span>
+                        <span class="slider-text" id="text-brightness">70%</span>
                     </div>
                 </div>
                 
-                <div class="setting-row" onclick="selectRow(this)">
+                <div class="setting-row" data-type="slider" data-key="timeout" data-min="0" data-max="60" data-value="5">
                     <div class="indicator"></div>
                     <div class="setting-label">Screen Timeout</div>
-                    <div class="slider-cell">
-                        <div class="slider-track" onclick="adjustSlider(this, event)">
-                            <div class="slider-fill" style="width: 30%;"></div>
+                    <div class="slider-cell" onclick="startSlider(event, this)">
+                        <div class="slider-track" id="track-timeout">
+                            <div class="slider-fill" id="fill-timeout" style="width: 8%;"></div>
                         </div>
-                        <span class="slider-text">5min</span>
+                        <span class="slider-text" id="text-timeout">5min</span>
                     </div>
                 </div>
                 
                 <div class="section-divider">AUDIO</div>
                 
-                <div class="setting-row" onclick="selectRow(this)">
+                <div class="setting-row" data-type="slider" data-key="volume" data-min="0" data-max="100" data-value="50">
                     <div class="indicator"></div>
                     <div class="setting-label">Master Volume</div>
-                    <div class="slider-cell">
-                        <div class="slider-track" onclick="adjustSlider(this, event)">
-                            <div class="slider-fill" style="width: 50%;"></div>
+                    <div class="slider-cell" onclick="startSlider(event, this)">
+                        <div class="slider-track" id="track-volume">
+                            <div class="slider-fill" id="fill-volume" style="width: 50%;"></div>
                         </div>
-                        <span class="slider-text">50%</span>
+                        <span class="slider-text" id="text-volume">50%</span>
                     </div>
                 </div>
                 
-                <div class="setting-row" onclick="toggleCheck(this)">
-                    <div class="indicator checked">*</div>
+                <div class="setting-row" data-type="toggle" data-key="sounds" onclick="toggleSetting(this)">
+                    <div class="indicator checked" id="ind-sounds">✓</div>
                     <div class="setting-label">System Sounds</div>
-                    <div class="setting-value">ON</div>
+                    <div class="setting-value" id="val-sounds">ON</div>
                 </div>
                 
-                <div class="section-divider">NETWORK</div>
+                <div class="section-divider">POWER</div>
                 
-                <div class="setting-row" onclick="selectRow(this)">
-                    <div class="indicator radio checked">*</div>
-                    <div class="setting-label">WiFi Network</div>
-                    <div class="setting-value">Connected</div>
+                <div class="setting-row" data-type="action" onclick="confirmReboot()">
+                    <div class="indicator"></div>
+                    <div class="setting-label" style="color: #fa0;">↻ Reboot System</div>
+                    <div class="setting-value">→</div>
                 </div>
                 
-                <div class="setting-row" onclick="selectRow(this)">
-                    <div class="indicator radio"></div>
-                    <div class="setting-label">Ethernet</div>
-                    <div class="setting-value">Disconnected</div>
+                <div class="setting-row" data-type="action" onclick="confirmShutdown()">
+                    <div class="indicator"></div>
+                    <div class="setting-label" style="color: #f55;">⏻ Shutdown</div>
+                    <div class="setting-value">→</div>
                 </div>
             </div>
         </div>
         
         <div class="bottom">
-            <div class="btn" onclick="alert('Select')">SELECT</div>
-            <div class="btn primary" onclick="alert('Enter')">ENTER</div>
+            <div class="nav-btn" onclick="goBack()">← BACK</div>
+            <div class="nav-btn" onclick="saveSettings()">💾 SAVE</div>
+            <div class="nav-btn" onclick="resetDefaults()">↺ RESET</div>
+            <div class="nav-btn" onclick="testSound()">🔊 TEST</div>
+            <div class="nav-btn" onclick="window.location.href='index.html'">🏠 HOME</div>
         </div>
     </div>
     
     <script>
-        function selectRow(row) {
-            document.querySelectorAll('.setting-row').forEach(r => r.classList.remove('selected'));
-            row.classList.add('selected');
+        // Settings state
+        const settings = {
+            autostart: true,
+            ssh: true,
+            ntp: true,
+            hostname: 'orangepi3b',
+            brightness: 70,
+            timeout: 5,
+            volume: 50,
+            sounds: true
+        };
+        
+        // Touch feedback
+        document.querySelectorAll('.setting-row, .nav-btn, .btn').forEach(el => {
+            el.addEventListener('touchstart', () => el.classList.add('touch-active'));
+            el.addEventListener('touchend', () => el.classList.remove('touch-active'));
+            el.addEventListener('mousedown', () => el.classList.add('touch-active'));
+            el.addEventListener('mouseup', () => el.classList.remove('touch-active'));
+        });
+        
+        function goBack() {
+            window.location.href = 'index.html';
         }
         
-        function toggleCheck(row) {
-            const ind = row.querySelector('.indicator');
-            if (ind.classList.contains('checked')) {
+        function toggleSetting(row) {
+            const key = row.dataset.key;
+            const ind = document.getElementById('ind-' + key);
+            const val = document.getElementById('val-' + key);
+            
+            settings[key] = !settings[key];
+            
+            if (settings[key]) {
+                ind.classList.add('checked');
+                ind.textContent = '✓';
+                val.textContent = key === 'sounds' ? 'ON' : (key === 'ssh' ? 'RUNNING' : 'ENABLED');
+            } else {
                 ind.classList.remove('checked');
                 ind.textContent = '';
-            } else {
-                ind.classList.add('checked');
-                ind.textContent = '*';
+                val.textContent = key === 'sounds' ? 'OFF' : (key === 'ssh' ? 'STOPPED' : 'DISABLED');
+            }
+            
+            // Apply setting
+            applySetting(key, settings[key]);
+        }
+        
+        function startSlider(event, cell) {
+            event.stopPropagation();
+            const row = cell.closest('.setting-row');
+            const key = row.dataset.key;
+            const min = parseInt(row.dataset.min);
+            const max = parseInt(row.dataset.max);
+            const track = cell.querySelector('.slider-track');
+            
+            function updateSlider(clientX) {
+                const rect = track.getBoundingClientRect();
+                const percent = Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100));
+                const value = Math.round(min + (percent / 100) * (max - min));
+                
+                settings[key] = value;
+                document.getElementById('fill-' + key).style.width = percent + '%';
+                
+                let displayVal = value;
+                if (key === 'timeout') displayVal = value + 'min';
+                else if (key === 'brightness' || key === 'volume') displayVal = value + '%';
+                document.getElementById('text-' + key).textContent = displayVal;
+                
+                // Apply in real-time
+                applySetting(key, value);
+            }
+            
+            updateSlider(event.clientX || event.touches[0].clientX);
+            
+            function onMove(e) {
+                const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                if (clientX) updateSlider(clientX);
+            }
+            
+            function onEnd() {
+                document.removeEventListener('mousemove', onMove);
+                document.removeEventListener('mouseup', onEnd);
+                document.removeEventListener('touchmove', onMove);
+                document.removeEventListener('touchend', onEnd);
+            }
+            
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onEnd);
+            document.addEventListener('touchmove', onMove);
+            document.addEventListener('touchend', onEnd);
+        }
+        
+        function applySetting(key, value) {
+            // These would connect to actual system calls on Orange Pi
+            console.log('Setting', key, 'to', value);
+            
+            // Simulate system commands
+            switch(key) {
+                case 'brightness':
+                    // echo value > /sys/class/backlight/.../brightness
+                    document.body.style.opacity = 0.3 + (value / 100) * 0.7;
+                    break;
+                case 'volume':
+                    // amixer set Master value%
+                    break;
+                case 'sounds':
+                    // Enable/disable system sounds
+                    break;
+                case 'ssh':
+                    // systemctl start/stop ssh
+                    break;
+                case 'ntp':
+                    // systemctl start/stop systemd-timesyncd
+                    break;
             }
         }
         
-        function adjustSlider(track, event) {
-            const rect = track.getBoundingClientRect();
-            const percent = Math.max(0, Math.min(100, ((event.clientX - rect.left) / rect.width) * 100));
-            track.querySelector('.slider-fill').style.width = percent + '%';
-            track.parentElement.querySelector('.slider-text').textContent = Math.round(percent) + '%';
+        function editHostname() {
+            const newHost = prompt('Enter new hostname:', settings.hostname);
+            if (newHost && newHost.trim()) {
+                settings.hostname = newHost.trim();
+                document.getElementById('hostname').textContent = settings.hostname;
+                // hostnamectl set-hostname newHost
+            }
+        }
+        
+        function confirmReboot() {
+            if (confirm('Reboot Orange Pi 3B?')) {
+                // systemctl reboot
+                alert('Rebooting...');
+            }
+        }
+        
+        function confirmShutdown() {
+            if (confirm('Shutdown Orange Pi 3B?')) {
+                // systemctl poweroff
+                alert('Shutting down...');
+            }
+        }
+        
+        function saveSettings() {
+            // Save to localStorage or config file
+            localStorage.setItem('friday_settings', JSON.stringify(settings));
+            alert('Settings saved!');
+        }
+        
+        function resetDefaults() {
+            if (confirm('Reset to defaults?')) {
+                settings.brightness = 70;
+                settings.timeout = 5;
+                settings.volume = 50;
+                settings.autostart = true;
+                settings.ssh = true;
+                settings.ntp = true;
+                settings.sounds = true;
+                
+                // Update UI
+                location.reload();
+            }
+        }
+        
+        function testSound() {
+            // aplay /usr/share/sounds/test.wav
+            if (settings.sounds) {
+                alert('♪ Test sound played');
+            } else {
+                alert('System sounds are OFF');
+            }
+        }
+        
+        function showTab(tab) {
+            // Could filter settings by category
+            console.log('Show tab:', tab);
+        }
+        
+        // Load saved settings on start
+        const saved = localStorage.getItem('friday_settings');
+        if (saved) {
+            Object.assign(settings, JSON.parse(saved));
+            // Apply loaded settings to UI...
         }
     </script>
 </body>
 </html>
+EOF
