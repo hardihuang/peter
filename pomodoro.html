@@ -68,9 +68,17 @@
     <script>
         let timeLeft = 25 * 60, totalTime = 25 * 60, isRunning = false, currentMode = 'work', sessionCount = 0, timerInterval = null;
         let workMinutes = 25, shortMinutes = 5, longMinutes = 15, sessionsBeforeLong = 4;
+        let tickAudio = null;
         
         const savedBrightness = localStorage.getItem('brightness');
         if (savedBrightness) document.body.style.filter = `brightness(${0.3 + (parseInt(savedBrightness) / 100) * 0.7})`;
+        
+        // Initialize ticking sound
+        function initTickSound() {
+            tickAudio = new Audio('sounds/tick.mp3');
+            tickAudio.volume = 0.3;
+        }
+        initTickSound();
         
         function formatTime(s) { const m = Math.floor(s / 60); const sec = s % 60; return `${m.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`; }
         function updateDisplay() { document.getElementById('timer').textContent = formatTime(timeLeft); document.title = `F.R.I.D.A.Y. - ${formatTime(timeLeft)}`; }
@@ -97,6 +105,11 @@
             isRunning = true; document.getElementById('btn-main').textContent = 'PAUSE'; document.getElementById('status').classList.add('active');
             timerInterval = setInterval(() => {
                 timeLeft--; updateDisplay();
+                // Play tick sound during work sessions
+                if (currentMode === 'work' && tickAudio) {
+                    tickAudio.currentTime = 0;
+                    tickAudio.play().catch(() => {});
+                }
                 if (timeLeft <= 0) completeSession();
             }, 1000);
         }
