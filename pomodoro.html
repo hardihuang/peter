@@ -68,17 +68,20 @@
     <script>
         let timeLeft = 25 * 60, totalTime = 25 * 60, isRunning = false, currentMode = 'work', sessionCount = 0, timerInterval = null;
         let workMinutes = 25, shortMinutes = 5, longMinutes = 15, sessionsBeforeLong = 4;
-        let tickAudio = null;
+        let tickAudio = null, waterAudio = null;
         
         const savedBrightness = localStorage.getItem('brightness');
         if (savedBrightness) document.body.style.filter = `brightness(${0.3 + (parseInt(savedBrightness) / 100) * 0.7})`;
         
-        // Initialize ticking sound
-        function initTickSound() {
+        // Initialize sounds
+        function initSounds() {
             tickAudio = new Audio('sounds/tick.mp3');
             tickAudio.volume = 0.3;
+            waterAudio = new Audio('sounds/water.mp3');
+            waterAudio.volume = 0.4;
+            waterAudio.loop = true;
         }
-        initTickSound();
+        initSounds();
         
         function formatTime(s) { const m = Math.floor(s / 60); const sec = s % 60; return `${m.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`; }
         function updateDisplay() { document.getElementById('timer').textContent = formatTime(timeLeft); document.title = `F.R.I.D.A.Y. - ${formatTime(timeLeft)}`; }
@@ -103,6 +106,11 @@
         
         function startTimer() {
             isRunning = true; document.getElementById('btn-main').textContent = 'PAUSE'; document.getElementById('status').classList.add('active');
+            // Start water sound for breaks
+            if (currentMode !== 'work' && waterAudio) {
+                waterAudio.currentTime = 0;
+                waterAudio.play().catch(() => {});
+            }
             timerInterval = setInterval(() => {
                 timeLeft--; updateDisplay();
                 // Play tick sound during work sessions
@@ -116,6 +124,11 @@
         
         function stopTimer() {
             isRunning = false; clearInterval(timerInterval); document.getElementById('btn-main').textContent = 'START'; document.getElementById('status').classList.remove('active');
+            // Stop water sound
+            if (waterAudio) {
+                waterAudio.pause();
+                waterAudio.currentTime = 0;
+            }
         }
         
         function resetTimer() {
