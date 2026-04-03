@@ -213,6 +213,18 @@
             el.addEventListener('click', playClickSound);
         });
         
+        // Forest ambient background sound
+        const forestAudio = new Audio('sounds/forest.mp3');
+        forestAudio.volume = 0.25;
+        forestAudio.loop = true;
+        
+        // Start forest sound on first user interaction (browser policy requires this)
+        function startAmbientSound() {
+            forestAudio.play().catch(() => {});
+            document.removeEventListener('click', startAmbientSound);
+        }
+        document.addEventListener('click', startAmbientSound);
+        
         typeFriday();
         updateTime();
         updateStats();
