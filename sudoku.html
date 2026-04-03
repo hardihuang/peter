@@ -44,11 +44,11 @@
             width: 42px; height: 36px; 
             border: 1px solid #0f0; 
             display: flex; align-items: center; justify-content: center;
-            font-size: 18px; cursor: grab;
+            font-size: 18px; cursor: pointer;
             background: #000;
         }
         .num-tile:hover { background: rgba(0,255,0,0.15); }
-        .num-tile:active { cursor: grabbing; }
+        .num-tile.selected { background: rgba(0,255,0,0.3); border-color: #0f0; box-shadow: 0 0 8px #0f0; }
         .action-btns { display: flex; flex-direction: column; gap: 4px; }
         .action-btn { 
             border: 1px solid #0f0; padding: 6px; 
@@ -112,11 +112,11 @@
         let solution = [];
         let fixed = [];
         let selectedCell = null;
+        let selectedNum = null;
         let currentDifficulty = 'medium';
         let timerInterval = null;
         let seconds = 0;
         let gameActive = false;
-        let draggedNum = null;
 
         const difficulties = { easy: 35, medium: 45, hard: 55 };
 
@@ -133,24 +133,7 @@
                 const cell = document.createElement('div');
                 cell.className = 'cell';
                 cell.dataset.index = i;
-                cell.onclick = () => selectCell(i);
-                
-                // Drag and drop events
-                cell.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    if (!fixed[i]) cell.classList.add('drag-over');
-                });
-                cell.addEventListener('dragleave', () => cell.classList.remove('drag-over'));
-                cell.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    cell.classList.remove('drag-over');
-                    if (draggedNum !== null && !fixed[i] && gameActive) {
-                        board[i] = draggedNum;
-                        updateBoard();
-                        checkWin();
-                    }
-                });
-                
+                cell.onclick = () => cellClicked(i);
                 boardEl.appendChild(cell);
             }
         }
@@ -162,53 +145,63 @@
                 const tile = document.createElement('div');
                 tile.className = 'num-tile';
                 tile.textContent = i;
-                tile.draggable = true;
                 tile.dataset.num = i;
-                
-                tile.addEventListener('dragstart', (e) => {
-                    draggedNum = i;
-                    tile.classList.add('dragging');
-                    e.dataTransfer.effectAllowed = 'copy';
-                });
-                tile.addEventListener('dragend', () => {
-                    draggedNum = null;
-                    tile.classList.remove('dragging');
-                });
-                
-                // Touch support for mobile
-                tile.addEventListener('touchstart', (e) => {
-                    draggedNum = i;
-                    tile.classList.add('dragging');
-                }, {passive: true});
-                tile.addEventListener('touchend', (e) => {
-                    const touch = e.changedTouches[0];
-                    const elem = document.elementFromPoint(touch.clientX, touch.clientY);
-                    if (elem && elem.classList.contains('cell') && !elem.classList.contains('fixed')) {
-                        const idx = parseInt(elem.dataset.index);
-                        if (gameActive) {
-                            board[idx] = i;
-                            updateBoard();
-                            checkWin();
-                        }
-                    }
-                    draggedNum = null;
-                    tile.classList.remove('dragging');
-                }, {passive: true});
-                
+                tile.onclick = () => numClicked(i);
                 numbersEl.appendChild(tile);
             }
         }
 
-        function selectCell(index) {
+        function cellClicked(index) {
             if (!gameActive) return;
-            selectedCell = index;
-            updateBoard();
+            // If a number is selected, fill the cell
+            if (selectedNum !== null && !fixed[index]) {
+                board[index] = selectedNum;
+                selectedNum = null;
+                updateNumbersUI();
+                updateBoard();
+                checkWin();
+            } else {
+                // Just select the cell
+                selectedCell = index;
+                updateBoard();
+            }
+        }
+        
+        function numClicked(num) {
+            if (!gameActive) return;
+            // If a cell is selected, fill it
+            if (selectedCell !== null && !fixed[selectedCell]) {
+                board[selectedCell] = num;
+                selectedCell = null;
+                updateBoard();
+                checkWin();
+            } else {
+                // Just select the number
+                selectedNum = num;
+                updateNumbersUI();
+            }
+        }
+        
+        function updateNumbersUI() {
+            document.querySelectorAll('.num-tile').forEach(tile => {
+                tile.classList.remove('selected');
+                if (parseInt(tile.dataset.num) === selectedNum) {
+                    tile.classList.add('selected');
+                }
+            });
         }
 
         function clearSelected() {
-            if (!gameActive || selectedCell === null || fixed[selectedCell]) return;
-            board[selectedCell] = 0;
-            updateBoard();
+            if (!gameActive) return;
+            // Clear selected cell if any
+            if (selectedCell !== null && !fixed[selectedCell]) {
+                board[selectedCell] = 0;
+                selectedCell = null;
+                updateBoard();
+            } else if (selectedNum !== null) {
+                selectedNum = null;
+                updateNumbersUI();
+            }
         }
 
         function hint() {
@@ -231,7 +224,7 @@
                 if (board[i] !== 0 && board[i] !== solution[i]) errors++;
             }
             document.getElementById('status').textContent = errors > 0 ? errors + ' errors found' : 'No errors';
-            setTimeout(() => document.getElementById('status').textContent = 'Drag numbers to squares', 2000);
+            setTimeout(() => document.getElementById('status').textContent = 'Click cell then number', 2000);
         }
 
         function updateBoard() {
@@ -241,6 +234,12 @@
                 cell.className = 'cell';
                 if (fixed[i]) cell.classList.add('fixed');
                 else if (board[i] !== 0) cell.classList.add('user');
+                if (i === selectedCell) cell.classList.add('selected');
+                // Highlight cells with same number as selected number
+                if (selectedNum !== null && board[i] === selectedNum) {
+                    cell.classList.add('highlight');
+                }
+                // Highlight cells with same number as selected cell
                 if (selectedCell !== null && board[i] !== 0 && board[i] === board[selectedCell] && i !== selectedCell) {
                     cell.classList.add('highlight');
                 }
@@ -279,8 +278,10 @@
             generatePuzzle();
             gameActive = true;
             selectedCell = null;
+            selectedNum = null;
+            updateNumbersUI();
             updateBoard();
-            document.getElementById('status').textContent = 'Drag numbers to squares';
+            document.getElementById('status').textContent = 'Click cell then number';
         }
 
         function updateTimer() {
