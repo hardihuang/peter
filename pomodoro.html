@@ -150,14 +150,7 @@
             bgAudio = new Audio(sounds[currentSound].src);
             bgAudio.volume = volume;
             bgAudio.loop = sounds[currentSound].loop;
-            bgAudio.play().catch(e => console.log('Audio play failed:', e));
-        }
-        
-        function playTick() {
-            if (currentSound !== 'tick1' && currentSound !== 'tick2') return;
-            const tick = new Audio(sounds[currentSound].src);
-            tick.volume = volume;
-            tick.play().catch(e => console.log('Tick play failed:', e));
+            bgAudio.play().catch(() => {});
         }
         
         function stopSound() {
@@ -191,8 +184,9 @@
             timerInterval = setInterval(() => {
                 timeLeft--; updateDisplay();
                 // For tick sounds, play every second
-                if (currentSound === 'tick1' || currentSound === 'tick2') {
-                    playTick();
+                if ((currentSound === 'tick1' || currentSound === 'tick2') && bgAudio) {
+                    bgAudio.currentTime = 0;
+                    bgAudio.play().catch(() => {});
                 }
                 if (timeLeft <= 0) completeSession();
             }, 1000);
