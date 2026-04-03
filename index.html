@@ -134,7 +134,6 @@
             <div class="btn" onclick="alert('Logs')">LOGS</div>
             <div class="btn" onclick="alert('Restart')">RESTART</div>
             <div class="btn" onclick="alert('Status')">STATUS</div>
-            <div class="btn" onclick="toggleForestSound()" id="forest-btn">🔥 SOUND</div>
         </div>
     </div>
     <script>
@@ -221,44 +220,6 @@
         document.querySelectorAll('.btn, .app-item, .subagent-item').forEach(el => {
             el.addEventListener('click', playClickSound);
         });
-        
-        // Forest ambient background sound (toggleable)
-        let forestAudio = null;
-        let forestPlaying = false;
-        
-        function toggleForestSound() {
-            if (!forestAudio) {
-                forestAudio = new Audio('sounds/forest.mp3');
-                forestAudio.volume = 0.25;
-                forestAudio.loop = true;
-            }
-            
-            if (forestPlaying) {
-                forestAudio.pause();
-                forestPlaying = false;
-            } else {
-                forestAudio.play().catch(() => {});
-                forestPlaying = true;
-            }
-            
-            // Save preference
-            localStorage.setItem('forest-sound', forestPlaying ? 'on' : 'off');
-            updateForestBtn();
-        }
-        
-        // Restore previous state
-        const savedForest = localStorage.getItem('forest-sound');
-        if (savedForest === 'on') {
-            toggleForestSound();
-        }
-        
-        function updateForestBtn() {
-            const btn = document.getElementById('forest-btn');
-            if (btn) {
-                btn.textContent = forestPlaying ? '🔥 SOUND ON' : '🔥 SOUND OFF';
-                btn.style.background = forestPlaying ? 'rgba(0,255,0,0.2)' : '';
-            }
-        }
         
         typeFriday();
         updateTime();
