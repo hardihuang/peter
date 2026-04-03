@@ -7,31 +7,41 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
         body { width: 800px; height: 480px; overflow: hidden; background: #000; color: #0f0; font-family: 'Courier New', monospace; }
-        .container { width: 800px; height: 480px; display: grid; grid-template-rows: 44px 1fr 60px; padding: 8px; gap: 6px; }
+        .container { width: 800px; height: 480px; display: grid; grid-template-rows: 44px 1fr 70px; padding: 8px; gap: 6px; }
         .header { border: 1px solid #0f0; padding: 4px 8px; display: flex; gap: 6px; align-items: center; }
         .nav-btn { border: 1px solid #0f0; padding: 6px 12px; cursor: pointer; font-size: 11px; min-height: 32px; display: flex; align-items: center; justify-content: center; }
         .nav-btn:hover { background: rgba(0,255,0,0.15); }
         .nav-btn.active { background: rgba(0,255,0,0.25); }
         .back-btn { margin-right: auto; min-width: 70px; }
         .main { border: 1px solid #0f0; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
-        .timer-display { font-size: 120px; font-weight: bold; letter-spacing: 8px; text-shadow: 0 0 20px #0f0; }
+        .timer-display { font-size: 100px; font-weight: bold; letter-spacing: 8px; text-shadow: 0 0 20px #0f0; }
         .timer-display.work { color: #0f0; }
         .timer-display.break { color: #0af; text-shadow: 0 0 20px #0af; }
         .timer-display.longbreak { color: #a0f; text-shadow: 0 0 20px #a0f; }
-        .status { position: absolute; top: 15px; font-size: 14px; color: #080; letter-spacing: 3px; }
+        .status { position: absolute; top: 10px; font-size: 14px; color: #080; letter-spacing: 3px; }
         .status.active { color: #0f0; }
-        .sessions { position: absolute; bottom: 15px; font-size: 12px; color: #080; }
+        .sessions { position: absolute; bottom: 10px; font-size: 12px; color: #080; }
         .dot { display: inline-block; width: 12px; height: 12px; border: 1px solid #0f0; margin: 0 4px; border-radius: 50%; }
         .dot.done { background: #0f0; }
-        .controls { display: flex; gap: 15px; margin-top: 25px; }
-        .btn { border: 1px solid #0f0; padding: 15px 35px; cursor: pointer; font-size: 16px; min-width: 120px; text-align: center; }
+        .controls { display: flex; gap: 15px; margin-top: 15px; }
+        .btn { border: 1px solid #0f0; padding: 12px 30px; cursor: pointer; font-size: 14px; min-width: 100px; text-align: center; }
         .btn:hover { background: rgba(0,255,0,0.15); }
         .btn.primary { background: rgba(0,255,0,0.2); font-weight: bold; }
-        .bottom { border: 1px solid #0f0; padding: 8px; display: flex; gap: 15px; align-items: center; justify-content: center; }
-        .setting { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-        .setting label { font-size: 9px; color: #080; }
-        .setting input { background: #000; border: 1px solid #050; color: #0f0; padding: 6px; font-family: 'Courier New', monospace; font-size: 14px; width: 50px; text-align: center; }
+        .bottom { border: 1px solid #0f0; padding: 6px; display: flex; flex-direction: column; gap: 4px; }
+        .settings-row { display: flex; gap: 10px; align-items: center; justify-content: center; }
+        .setting { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+        .setting label { font-size: 8px; color: #080; }
+        .setting input { background: #000; border: 1px solid #050; color: #0f0; padding: 4px; font-family: 'Courier New', monospace; font-size: 12px; width: 40px; text-align: center; }
         .setting input:focus { border-color: #0f0; outline: none; }
+        .sound-select { display: flex; gap: 6px; align-items: center; }
+        .sound-select label { font-size: 8px; color: #080; }
+        .sound-btn { border: 1px solid #050; padding: 4px 8px; cursor: pointer; font-size: 9px; background: #000; color: #0a0; }
+        .sound-btn:hover { border-color: #0f0; color: #0f0; }
+        .sound-btn.active { border-color: #0f0; background: rgba(0,255,0,0.2); color: #0f0; }
+        .volume-control { display: flex; align-items: center; gap: 4px; }
+        .volume-control label { font-size: 8px; color: #080; }
+        .volume-slider { width: 60px; height: 4px; -webkit-appearance: none; background: #050; outline: none; }
+        .volume-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 10px; height: 10px; background: #0f0; cursor: pointer; }
         .scanline { position: fixed; top: 0; left: 0; width: 100%; height: 2px; background: rgba(0,255,0,0.25); animation: scan 3s linear infinite; pointer-events: none; }
         @keyframes scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(480px); } }
         .notification { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 2px solid #0f0; background: #000; padding: 40px 60px; font-size: 28px; display: none; z-index: 100; box-shadow: 0 0 40px rgba(0,255,0,0.5); }
@@ -59,33 +69,96 @@
             <div class="sessions" id="sessions">Sessions: <span id="dots"></span></div>
         </div>
         <div class="bottom">
-            <div class="setting"><label>WORK</label><input type="number" id="work-time" value="25" min="1" max="60" onchange="updateTimes()"></div>
-            <div class="setting"><label>SHORT</label><input type="number" id="short-time" value="5" min="1" max="30" onchange="updateTimes()"></div>
-            <div class="setting"><label>LONG</label><input type="number" id="long-time" value="15" min="1" max="60" onchange="updateTimes()"></div>
-            <div class="setting"><label>COUNT</label><input type="number" id="sessions-before-long" value="4" min="2" max="10" onchange="updateTimes()"></div>
+            <div class="settings-row">
+                <div class="setting"><label>WORK</label><input type="number" id="work-time" value="25" min="1" max="60" onchange="updateTimes()"></div>
+                <div class="setting"><label>SHORT</label><input type="number" id="short-time" value="5" min="1" max="30" onchange="updateTimes()"></div>
+                <div class="setting"><label>LONG</label><input type="number" id="long-time" value="15" min="1" max="60" onchange="updateTimes()"></div>
+                <div class="setting"><label>COUNT</label><input type="number" id="sessions-before-long" value="4" min="2" max="10" onchange="updateTimes()"></div>
+            </div>
+            <div class="settings-row">
+                <div class="sound-select">
+                    <label>SOUND:</label>
+                    <div class="sound-btn" onclick="selectSound('none')" id="sound-none">NONE</div>
+                    <div class="sound-btn" onclick="selectSound('tick')" id="sound-tick">TICK</div>
+                    <div class="sound-btn active" onclick="selectSound('water')" id="sound-water">WATER</div>
+                    <div class="sound-btn" onclick="selectSound('forest')" id="sound-forest">FOREST</div>
+                </div>
+                <div class="volume-control">
+                    <label>VOL:</label>
+                    <input type="range" class="volume-slider" id="volume" min="0" max="100" value="40" onchange="updateVolume()">
+                </div>
+            </div>
         </div>
     </div>
     <script>
         let timeLeft = 25 * 60, totalTime = 25 * 60, isRunning = false, currentMode = 'work', sessionCount = 0, timerInterval = null;
         let workMinutes = 25, shortMinutes = 5, longMinutes = 15, sessionsBeforeLong = 4;
-        let tickAudio = null, waterAudio = null;
+        let currentSound = 'water', bgAudio = null, volume = 0.4;
+        
+        // Sound library
+        const sounds = {
+            tick: { src: 'sounds/tick.mp3', loop: false },
+            water: { src: 'sounds/water.mp3', loop: true },
+            forest: { src: 'sounds/forest.mp3', loop: true }
+        };
         
         const savedBrightness = localStorage.getItem('brightness');
         if (savedBrightness) document.body.style.filter = `brightness(${0.3 + (parseInt(savedBrightness) / 100) * 0.7})`;
         
-        // Initialize sounds
-        function initSounds() {
-            tickAudio = new Audio('sounds/tick.mp3');
-            tickAudio.volume = 0.3;
-            waterAudio = new Audio('sounds/water.mp3');
-            waterAudio.volume = 0.4;
-            waterAudio.loop = true;
+        // Load saved sound preference
+        const savedSound = localStorage.getItem('pomodoro-sound');
+        const savedVolume = localStorage.getItem('pomodoro-volume');
+        if (savedSound && sounds[savedSound]) {
+            currentSound = savedSound;
+            updateSoundUI();
         }
-        initSounds();
+        if (savedVolume !== null) {
+            volume = parseInt(savedVolume) / 100;
+            document.getElementById('volume').value = parseInt(savedVolume);
+        }
         
         function formatTime(s) { const m = Math.floor(s / 60); const sec = s % 60; return `${m.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`; }
         function updateDisplay() { document.getElementById('timer').textContent = formatTime(timeLeft); document.title = `F.R.I.D.A.Y. - ${formatTime(timeLeft)}`; }
         function updateDots() { let dots = ''; for (let i = 0; i < sessionsBeforeLong; i++) dots += `<span class="dot ${i < sessionCount ? 'done' : ''}"></span>`; document.getElementById('dots').innerHTML = dots; }
+        
+        function selectSound(soundName) {
+            if (isRunning) stopSound();
+            currentSound = soundName;
+            localStorage.setItem('pomodoro-sound', soundName);
+            updateSoundUI();
+            if (isRunning) playSound();
+        }
+        
+        function updateSoundUI() {
+            ['none', 'tick', 'water', 'forest'].forEach(s => {
+                document.getElementById('sound-' + s).classList.remove('active');
+            });
+            document.getElementById('sound-' + currentSound).classList.add('active');
+        }
+        
+        function updateVolume() {
+            const vol = parseInt(document.getElementById('volume').value);
+            volume = vol / 100;
+            localStorage.setItem('pomodoro-volume', vol);
+            if (bgAudio) bgAudio.volume = volume;
+        }
+        
+        function playSound() {
+            if (currentSound === 'none') return;
+            stopSound();
+            bgAudio = new Audio(sounds[currentSound].src);
+            bgAudio.volume = volume;
+            bgAudio.loop = sounds[currentSound].loop;
+            bgAudio.play().catch(() => {});
+        }
+        
+        function stopSound() {
+            if (bgAudio) {
+                bgAudio.pause();
+                bgAudio.currentTime = 0;
+                bgAudio = null;
+            }
+        }
         
         function setMode(mode) {
             if (isRunning && !confirm('Switch mode? Timer will reset.')) return;
@@ -106,17 +179,13 @@
         
         function startTimer() {
             isRunning = true; document.getElementById('btn-main').textContent = 'PAUSE'; document.getElementById('status').classList.add('active');
-            // Start water sound for breaks
-            if (currentMode !== 'work' && waterAudio) {
-                waterAudio.currentTime = 0;
-                waterAudio.play().catch(() => {});
-            }
+            playSound();
             timerInterval = setInterval(() => {
                 timeLeft--; updateDisplay();
-                // Play tick sound during work sessions
-                if (currentMode === 'work' && tickAudio) {
-                    tickAudio.currentTime = 0;
-                    tickAudio.play().catch(() => {});
+                // For tick sound, play every second
+                if (currentSound === 'tick' && bgAudio) {
+                    bgAudio.currentTime = 0;
+                    bgAudio.play().catch(() => {});
                 }
                 if (timeLeft <= 0) completeSession();
             }, 1000);
@@ -124,11 +193,7 @@
         
         function stopTimer() {
             isRunning = false; clearInterval(timerInterval); document.getElementById('btn-main').textContent = 'START'; document.getElementById('status').classList.remove('active');
-            // Stop water sound
-            if (waterAudio) {
-                waterAudio.pause();
-                waterAudio.currentTime = 0;
-            }
+            stopSound();
         }
         
         function resetTimer() {
@@ -169,6 +234,7 @@
         }
         
         updateDots();
+        updateSoundUI();
     </script>
 </body>
 </html>
