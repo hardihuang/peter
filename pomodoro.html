@@ -183,10 +183,11 @@
             playSound();
             timerInterval = setInterval(() => {
                 timeLeft--; updateDisplay();
-                // For tick sounds, play every second
-                if ((currentSound === 'tick1' || currentSound === 'tick2') && bgAudio) {
-                    bgAudio.currentTime = 0;
-                    bgAudio.play().catch(() => {});
+                // For tick sounds, create new audio each second
+                if (currentSound === 'tick1' || currentSound === 'tick2') {
+                    const tick = new Audio(sounds[currentSound].src);
+                    tick.volume = volume;
+                    tick.play().catch(() => {});
                 }
                 if (timeLeft <= 0) completeSession();
             }, 1000);
