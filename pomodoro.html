@@ -77,11 +77,15 @@
             </div>
             <div class="settings-row">
                 <div class="sound-select">
-                    <label>SOUND:</label>
-                    <div class="sound-btn" onclick="selectSound('none')" id="sound-none">NONE</div>
-                    <div class="sound-btn" onclick="selectSound('tick')" id="sound-tick">TICK</div>
-                    <div class="sound-btn active" onclick="selectSound('water')" id="sound-water">WATER</div>
-                    <div class="sound-btn" onclick="selectSound('forest')" id="sound-forest">FOREST</div>
+                    <label>BGM:</label>
+                    <div class="sound-btn" onclick="selectBgSound('none')" id="bg-sound-none">NONE</div>
+                    <div class="sound-btn active" onclick="selectBgSound('water')" id="bg-sound-water">WATER</div>
+                    <div class="sound-btn" onclick="selectBgSound('fire')" id="bg-sound-fire">FIRE</div>
+                </div>
+                <div class="sound-select">
+                    <label>TICK:</label>
+                    <div class="sound-btn" onclick="toggleTick(false)" id="tick-off">OFF</div>
+                    <div class="sound-btn active" onclick="toggleTick(true)" id="tick-on">ON</div>
                 </div>
                 <div class="volume-control">
                     <label>VOL:</label>
@@ -93,24 +97,27 @@
     <script>
         let timeLeft = 25 * 60, totalTime = 25 * 60, isRunning = false, currentMode = 'work', sessionCount = 0, timerInterval = null;
         let workMinutes = 25, shortMinutes = 5, longMinutes = 15, sessionsBeforeLong = 4;
-        let currentSound = 'water', bgAudio = null, volume = 0.4;
+        let currentBgSound = 'water', tickEnabled = true, bgAudio = null, tickAudio = null, volume = 0.4;
         
         // Sound library
         const sounds = {
-            tick: { src: 'sounds/tick.mp3', loop: false },
-            water: { src: 'sounds/water.mp3', loop: true },
-            forest: { src: 'sounds/forest.mp3', loop: true }
+            tick: { src: 'sounds/tick.mp3' },
+            water: { src: 'sounds/water.mp3' },
+            fire: { src: 'sounds/forest.mp3' }
         };
         
         const savedBrightness = localStorage.getItem('brightness');
         if (savedBrightness) document.body.style.filter = `brightness(${0.3 + (parseInt(savedBrightness) / 100) * 0.7})`;
         
-        // Load saved sound preference
-        const savedSound = localStorage.getItem('pomodoro-sound');
+        // Load saved sound preferences
+        const savedBgSound = localStorage.getItem('pomodoro-bg-sound');
+        const savedTickEnabled = localStorage.getItem('pomodoro-tick');
         const savedVolume = localStorage.getItem('pomodoro-volume');
-        if (savedSound && sounds[savedSound]) {
-            currentSound = savedSound;
-            updateSoundUI();
+        if (savedBgSound && sounds[savedBgSound]) {
+            currentBgSound = savedBgSound;
+        }
+        if (savedTickEnabled !== null) {
+            tickEnabled = savedTickEnabled === 'true';
         }
         if (savedVolume !== null) {
             volume = parseInt(savedVolume) / 100;
@@ -121,19 +128,31 @@
         function updateDisplay() { document.getElementById('timer').textContent = formatTime(timeLeft); document.title = `F.R.I.D.A.Y. - ${formatTime(timeLeft)}`; }
         function updateDots() { let dots = ''; for (let i = 0; i < sessionsBeforeLong; i++) dots += `<span class="dot ${i < sessionCount ? 'done' : ''}"></span>`; document.getElementById('dots').innerHTML = dots; }
         
-        function selectSound(soundName) {
-            if (isRunning) stopSound();
-            currentSound = soundName;
-            localStorage.setItem('pomodoro-sound', soundName);
+        function selectBgSound(soundName) {
+            if (isRunning) stopBgSound();
+            currentBgSound = soundName;
+            localStorage.setItem('pomodoro-bg-sound', soundName);
             updateSoundUI();
-            if (isRunning) playSound();
+            if (isRunning) playBgSound();
+        }
+        
+        function toggleTick(enabled) {
+            tickEnabled = enabled;
+            localStorage.setItem('pomodoro-tick', enabled);
+            updateSoundUI();
+            if (!enabled && tickAudio) {
+                tickAudio.pause();
+                tickAudio = null;
+            }
         }
         
         function updateSoundUI() {
-            ['none', 'tick', 'water', 'forest'].forEach(s => {
-                document.getElementById('sound-' + s).classList.remove('active');
+            ['none', 'water', 'fire'].forEach(s => {
+                document.getElementById('bg-sound-' + s).classList.remove('active');
             });
-            document.getElementById('sound-' + currentSound).classList.add('active');
+            document.getElementById('bg-sound-' + currentBgSound).classList.add('active');
+            document.getElementById('tick-off').classList.toggle('active', !tickEnabled);
+            document.getElementById('tick-on').classList.toggle('active', tickEnabled);
         }
         
         function updateVolume() {
@@ -143,21 +162,28 @@
             if (bgAudio) bgAudio.volume = volume;
         }
         
-        function playSound() {
-            if (currentSound === 'none') return;
-            stopSound();
-            bgAudio = new Audio(sounds[currentSound].src);
+        function playBgSound() {
+            if (currentBgSound === 'none') return;
+            stopBgSound();
+            bgAudio = new Audio(sounds[currentBgSound].src);
             bgAudio.volume = volume;
-            bgAudio.loop = sounds[currentSound].loop;
+            bgAudio.loop = true;
             bgAudio.play().catch(() => {});
         }
         
-        function stopSound() {
+        function stopBgSound() {
             if (bgAudio) {
                 bgAudio.pause();
                 bgAudio.currentTime = 0;
                 bgAudio = null;
             }
+        }
+        
+        function playTick() {
+            if (!tickEnabled) return;
+            tickAudio = new Audio(sounds.tick.src);
+            tickAudio.volume = volume * 0.7;
+            tickAudio.play().catch(() => {});
         }
         
         function setMode(mode) {
@@ -179,21 +205,17 @@
         
         function startTimer() {
             isRunning = true; document.getElementById('btn-main').textContent = 'PAUSE'; document.getElementById('status').classList.add('active');
-            playSound();
+            playBgSound();
             timerInterval = setInterval(() => {
                 timeLeft--; updateDisplay();
-                // For tick sound, play every second
-                if (currentSound === 'tick' && bgAudio) {
-                    bgAudio.currentTime = 0;
-                    bgAudio.play().catch(() => {});
-                }
+                playTick();
                 if (timeLeft <= 0) completeSession();
             }, 1000);
         }
         
         function stopTimer() {
             isRunning = false; clearInterval(timerInterval); document.getElementById('btn-main').textContent = 'START'; document.getElementById('status').classList.remove('active');
-            stopSound();
+            stopBgSound();
         }
         
         function resetTimer() {
